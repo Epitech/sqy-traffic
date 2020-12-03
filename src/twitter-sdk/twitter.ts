@@ -1,6 +1,6 @@
 import querystring from 'querystring';
 import axios from 'axios';
-import Tweet, { User } from 'twitter-d';
+import { Status as Tweet, User } from 'twitter-d';
 
 export default class Twitter {
 	private URL_BASE = 'https://api.twitter.com/2';
@@ -21,7 +21,8 @@ export default class Twitter {
 			},
 			params,
 		});
-		return response.data.data;
+
+		return response.data.data as T;
 	}
 
 	private async checkCredentials(): Promise<void> {
