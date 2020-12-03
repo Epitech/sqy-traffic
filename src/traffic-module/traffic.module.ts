@@ -1,4 +1,3 @@
-import { assert } from 'console';
 import express from 'express';
 import { version } from '../../package.json';
 import TrafficController from './traffic.controller';
