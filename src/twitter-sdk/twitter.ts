@@ -1,11 +1,10 @@
-import querystring from 'querystring';
 import axios from 'axios';
-import { Status as Tweet, User } from 'twitter-d';
+import { User } from 'twitter-d';
 
 export default class Twitter {
 	private URL_BASE = 'https://api.twitter.com/2';
 
-	private USERNAME_CHECKER = 'Pr0m3th3usE';
+	private USERNAME_CHECKER = 'POCInnovation';
 
 	constructor(private readonly bearerToken: string | undefined) {
 		this.checkCredentials();

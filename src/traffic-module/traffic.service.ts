@@ -10,9 +10,9 @@ export default class TrafficService {
 		this.T = new Twitter(process.env.TW_BEARER_TOKEN);
 	}
 
-	async getUser(username: string): Promise<void> {
-		const user = await this.T.GetUserByUsername("PoCInnovation");
-		console.log(user);
+	async getUser(username: string): Promise<User | undefined> {
+		const user = await this.T.GetUserByUsername(username);
+		return user;
 	}
 
 	static getInstance(): TrafficService {
