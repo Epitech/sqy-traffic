@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import { PORT } from '../config/environnement';
 import { TrafficModule } from './traffic-module';
 
 export default class App {
@@ -11,7 +12,7 @@ export default class App {
 	private appbase: express.Application;
 
 	constructor() {
-		this.port = 3000;
+		this.port = PORT;
 		this.appbase = express();
 		this.trafficModule = new TrafficModule();
 

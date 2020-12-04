@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { User } from 'twitter-d';
+import { API_BASE_URL, USERNAME_CHECKER, API_TOKEN } from '../../config/environnement';
 
 export default class Twitter {
 	private URL_BASE = 'https://api.twitter.com/2';
@@ -13,10 +14,10 @@ export default class Twitter {
 	private async request<T>(endpoint: string, params: any = {}): Promise<T> {
 		const response = await axios({
 			method: 'get',
-			url: `${this.URL_BASE}/${endpoint}`,
+			url: `${API_BASE_URL}/${endpoint}`,
 			headers: {
 				Accept: 'application/json',
-				Authorization: `Bearer ${this.bearerToken}`,
+				Authorization: `Bearer ${API_TOKEN}`,
 			},
 			params,
 		});
@@ -25,7 +26,7 @@ export default class Twitter {
 	}
 
 	private async checkCredentials(): Promise<void> {
-		await this.request<User>(`users/by/username/${this.USERNAME_CHECKER}`);
+		await this.request<User>(`users/by/username/${USERNAME_CHECKER}`);
 	}
 
 	async GetUserByUsername(username: string): Promise<User | undefined> {
