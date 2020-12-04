@@ -1,8 +1,13 @@
-import { Request, Response } from "express"
+import { Controller, Get } from "@nestjs/common"
 import TrafficService from "./traffic.service"
+import { version } from "../../package.json"
 
+@Controller(`api/${version}/disruptions`)
 export default class TrafficController {
-  async getDisruptions(req: Request, res: Response): Promise<void> {
-    const trafficService = TrafficService.getInstance()
+  constructor(private readonly trafficService: TrafficService) {}
+
+  @Get()
+  async getDisruptions(): Promise<string> {
+    return "GET /api/.../disruptions"
   }
 }

@@ -1,4 +1,11 @@
-import App from "./App"
+import { NestFactory } from "@nestjs/core"
+import { PORT } from "../config/environnement"
+import { AppModule } from "./App"
 
-const app = new App()
-app.start()
+async function main() {
+  const app = await NestFactory.create(AppModule)
+  app.enableCors()
+  app.listen(PORT)
+}
+
+main()
