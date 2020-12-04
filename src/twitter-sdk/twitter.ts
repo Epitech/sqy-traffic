@@ -1,7 +1,15 @@
 import axios, { AxiosError } from "axios"
-import { User } from "twitter-d"
 import { API_BASE_URL, USERNAME_CHECKER, API_TOKEN } from "../../config/environnement"
 import { TwitterAccounts } from "./constants"
+
+interface User {
+  // id of the user
+  id: string
+  // Full Name of the user
+  name: string
+  // Username of the user
+  username: string
+}
 
 interface TweetUrl {
   // Start of url
