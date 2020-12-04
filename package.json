@@ -13,8 +13,8 @@
     "start": "ts-node dist/index.js",
     "start:dev": "ts-node-dev src/index.ts",
     "clean": "rm -rf dist/ coverage/",
-    "lint": "eslint src/** tests/**",
-    "lint:fix": "eslint --fix src/** tests/**",
+    "lint": "eslint src/** tests/** config/**",
+    "lint:fix": "eslint --fix src/** tests/** config/**",
     "test": "jest --coverage tests",
     "test:watch": "jest --coverage tests --watchAll"
   },

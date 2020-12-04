@@ -1,12 +1,12 @@
-import { get, from, logger } from 'env-var';
-import { config } from 'dotenv';
+import { from, logger } from "env-var"
+import { config } from "dotenv"
 
-config();
+config()
 
-const debugged = from(process.env, {}, logger);
-const env = (name: string, required = true) => debugged.get(name).required(required);
+const debugged = from(process.env, {}, logger)
+const env = (name: string, required = true) => debugged.get(name).required(required)
 
-export const API_TOKEN = env('TW_BEARER_TOKEN').asString();
-export const API_BASE_URL = env('TW_API_URL').asString();
-export const USERNAME_CHECKER = env('USERNAME_CHECKER').asString();
-export const PORT = env('PORT', false).default(3000).asPortNumber();
+export const API_TOKEN = env("TW_BEARER_TOKEN").asString()
+export const API_BASE_URL = env("TW_API_URL").asString()
+export const USERNAME_CHECKER = env("USERNAME_CHECKER").asString()
+export const PORT = env("PORT", false).default(3000).asPortNumber()
