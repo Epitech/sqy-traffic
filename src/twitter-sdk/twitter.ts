@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios"
 import { API_BASE_URL, USERNAME_CHECKER, API_TOKEN } from "../../config/environnement"
-import { TwitterAccounts } from "./constants"
 
 interface User {
   // id of the user
@@ -47,11 +46,28 @@ interface Tweet {
   // 'tweet.fields=created_at' YYYY-MM-DDTHH:mm:ss.SSSZ
   created_at: string
   text: string
+  // 'tweet.fields=entities'
   entities?: {
     mentions?: TweetMention[]
     urls?: TweetUrl[]
     hashtags?: TweetHashtag[]
   }
+}
+
+interface GetTweetsQuery {
+  sinceId?: string
+  maxResults?: number
+}
+
+interface TweetsMeta {
+  // tweet id
+  newest_id: string
+  // tweet id
+  oldest_id: string
+  // tweet count
+  result_count: number
+  // token for pagination (&next_token=${meta.next_token})
+  next_token?: string
 }
 
 export default class Twitter {
@@ -63,7 +79,7 @@ export default class Twitter {
     this.checkCredentials()
   }
 
-  private async request<T>(endpoint: string, params: Record<string, never> = {}): Promise<T> {
+  private async request<T, U>(endpoint: string, params: Record<string, never> = {}): Promise<{ data: T; meta: U }> {
     const response = await axios({
       method: "get",
       url: `${API_BASE_URL}/${endpoint}`,
@@ -74,16 +90,16 @@ export default class Twitter {
       params,
     })
 
-    return response.data.data as T
+    return response.data
   }
 
   private async checkCredentials(): Promise<void> {
-    await this.request<User>(`users/by/username/${USERNAME_CHECKER}`)
+    await this.request<User, undefined>(`users/by/username/${USERNAME_CHECKER}`)
   }
 
   async GetUserByUsername(username: string): Promise<User | undefined> {
     try {
-      const user = await this.request<User>(`users/by/username/${username}`)
+      const { data: user } = await this.request<User, undefined>(`users/by/username/${username}`)
       return user
     } catch (err) {
       console.error((err as AxiosError).toJSON())
@@ -91,11 +107,17 @@ export default class Twitter {
     return undefined
   }
 
-  async getTweets(username: string): Promise<Tweet[] | undefined> {
+  async getTweets(username: string, queryParams: GetTweetsQuery): Promise<Tweet[] | undefined> {
+    let formattedQuery = `query=from:${username}&tweet.fields=created_at,entities`
+    if (queryParams.maxResults) {
+      formattedQuery += `&max_results=${queryParams.maxResults}`
+    }
+    if (queryParams.sinceId) {
+      formattedQuery += `&since_id=${queryParams.sinceId}`
+    }
     try {
-      const tweets = this.request<Tweet[]>(
-        `tweets/search/recent?query=from:${username}&tweet.fields=created_at,entities`,
-      )
+      // Todo: handle pagination
+      const { data: tweets } = await this.request<Tweet[], TweetsMeta>(`tweets/search/recent?${formattedQuery}`)
       return tweets
     } catch (err) {
       console.error((err as AxiosError).toJSON())
