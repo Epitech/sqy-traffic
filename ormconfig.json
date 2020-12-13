@@ -1,0 +1,12 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "root",
+    "password": "root",
+    "database": "NestTypeORMTodo",
+    "entities": [
+        "src/**/**.entity{.ts,.js}"
+    ],
+    "synchronize": true
+}

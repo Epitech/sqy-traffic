@@ -12,11 +12,13 @@
     "build": "tsc",
     "start": "ts-node dist/index.js",
     "start:dev": "ts-node-dev src/index.ts",
+    "dev": "docker-compose up -d --build && ts-node-dev src/index.ts",
     "clean": "rm -rf dist/ coverage/",
     "lint": "eslint src/** tests/** config/**",
     "lint:fix": "eslint --fix src/** tests/** config/**",
     "test": "jest --coverage tests",
-    "test:watch": "jest --coverage tests --watchAll"
+    "test:watch": "jest --coverage tests --watchAll",
+    "pretty": "prettier --write 'src/**/*.{ts,tsx}'"
   },
   "repository": {
     "type": "git",
@@ -60,16 +62,20 @@
     "@nestjs/platform-express": "^7.5.5",
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/swagger": "^4.7.5",
+    "@nestjs/typeorm": "^7.1.5",
     "axios": "^0.21.0",
     "cron": "^1.8.2",
     "dotenv": "^8.2.0",
     "env-var": "^7.0.0",
     "husky": "^4.3.0",
     "jest": "^26.6.3",
+    "pg": "^8.5.1",
+    "postgres": "^1.0.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
     "ts-jest": "^26.4.4",
     "ts-node-dev": "^1.0.0",
+    "typeorm": "^0.2.29",
     "winston": "^3.3.3"
   }
 }

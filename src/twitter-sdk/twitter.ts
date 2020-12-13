@@ -120,7 +120,7 @@ export default class Twitter {
       const { data: tweets } = await this.request<Tweet[], TweetsMeta>(`tweets/search/recent?${formattedQuery}`)
       return tweets
     } catch (err) {
-      console.error((err as AxiosError).toJSON())
+      console.error(err as AxiosError)
     }
     return undefined
   }
