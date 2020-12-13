@@ -50,17 +50,8 @@ def getTimeDisruption(sentence, postedDate):
   begin_date = None
   end_date = None
   matches = datefinder.find_dates(sentence, index=True)
-  
-  # for d in matches:
-  #   print(d)
-  #   delta = datetime.today() - d[0];
-  #   print(delta)
-  #   print(abs(delta.total_seconds()))
-  #   print(str(7 * 24 * 3600))
   valid_dates = [ d for d in matches if abs((datetime.today() - d[0]).total_seconds())  <= 7 * 24 * 3600 ]
   
-  for match in valid_dates:
-    print(match)
   if len(valid_dates) >= 2:
     begin_date = valid_dates[0]
     end_date = valid_dates[1]
@@ -68,7 +59,8 @@ def getTimeDisruption(sentence, postedDate):
   elif len(valid_dates) == 1:
     begin_date = valid_dates[0]
     return begin_date, end_date
-  # ## If no dates trying four hours
+  
+  # ## If no dates trying for hours
   match = re.search(r'(\d+h\d+)', sentence)
   if match is None:
     return None, None
@@ -89,32 +81,25 @@ def semantic_analysis(tweet):
     error["message"] = "No disruption found"
     return error
   
-  sent_tknzr = LineTokenizer("french")
-  sentences = [ s.lower() for s in sent_tknzr.tokenize(tweet["text"]) if s not in punct ]
   print(tweet["text"])
-  # for sentence in sentences:
   beg_date, end_date = getTimeDisruption(tweet["text"], tweet["postedDate"])
-  print(beg_date, end_date)
-  if result['begin_date'] is None or result['end_date'] is None:
-    if result['begin_date'] is None:
-      result['begin_date'] = str(beg_date)
-    if result['end_date'] is None:
-      result['end_date'] = str(end_date)
-      
-    # if not result['description']:
-    #   result['description'] = getDescription(sentence)
+  if beg_date is not None:
+    result['begin_date'] = { "date": str(beg_date[0]), "start_index": beg_date[1][0], "end_index": beg_date[1][1] }
+  if end_date is not None:
+    result['end_date'] = { "date": str(end_date[0]), "start_index": end_date[1][0], "end_index": end_date[1][1] }
+  if not result['description']:
+    result['description'] = getDescription(tweet["text"])
   if not result['line']:
     result['line'] = getLines(tweet["text"])
   
-      
   if not result['line']:
     result['line'] = getLineFromTwitterAccount(tweet['accountName'])
   # Prefering send error if cound't anlayze well the tweet
-  # if shouldSendError(result):
-  #   return error
+  if shouldSendError(result):
+    return error
   return result
 
 if __name__ == "__main__":
     data = getJsonData()
     result = list(map(semantic_analysis, data))
-    # print(json.dumps(result))
+    print(json.dumps(result))
