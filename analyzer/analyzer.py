@@ -81,7 +81,6 @@ def semantic_analysis(tweet):
     error["message"] = "No disruption found"
     return error
   
-  print(tweet["text"])
   beg_date, end_date = getTimeDisruption(tweet["text"], tweet["postedDate"])
   if beg_date is not None:
     result['begin_date'] = { "date": str(beg_date[0]), "start_index": beg_date[1][0], "end_index": beg_date[1][1] }
