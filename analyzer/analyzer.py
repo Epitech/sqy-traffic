@@ -47,7 +47,7 @@ def getLineFromTwitterAccount(account_name, result):
     del result['line']['error']
 
 def getTimeDisruption(sentence, postedDate, result):
-  error = { "data": None, "message": "Not enough information found !"}
+  error = { "data": None, "error": "Not enough information found !"}
   hour_pattern = re.compile(r'(\d+h\d+)', re.IGNORECASE)
   
   begin_date = None
