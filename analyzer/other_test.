@@ -1,3 +1,0 @@
-
-  # sent_tknzr = LineTokenizer("french")
-  # sentences = [ s.lower() for s in sent_tknzr.tokenize(tweet["text"]) if s not in punct ]
