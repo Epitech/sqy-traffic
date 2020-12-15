@@ -80,7 +80,6 @@ def getTimeDisruption(sentence, postedDate, result):
   else:
     result['end_date'] = error
 
-
 def shouldSendError(result):
   return result["line"] == None or result["begin_date"] == None
 
