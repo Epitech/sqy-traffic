@@ -44,7 +44,8 @@ def getLineFromTwitterAccount(account_name):
     return LINE_ACCOUNTS[account_name]
   return None
 
-def getTimeDisruption(sentence, postedDate):
+def getTimeDisruption(sentence, postedDate, result):
+  error = { "code": 1, "message": "Not enough information found !"}
   hour_pattern = re.compile(r'(\d+h\d+)', re.IGNORECASE)
   
   begin_date = None
@@ -67,7 +68,16 @@ def getTimeDisruption(sentence, postedDate):
   hour, mins = tuple(list(map(int, match.group(0).split('h'))))
   datetime_tweet = datetime.strptime(postedDate, "%Y-%m-%dT%H:%M:%S.%fZ")
   begin_date = (datetime(datetime_tweet.year, datetime_tweet.month, datetime_tweet.day, hour=hour, minute=mins), (match.start(0), match.end(0)-1))
-  return begin_date, end_date
+  
+  
+  if begin_date is not None:
+    result['begin_date'] = { "data": str(begin_date[0]), "span": { "start": begin_date[1][0], "end": begin_date[1][1] } }
+  else:
+    result['begin_date'] = error
+  if end_date is not None:
+    result['end_date'] = { "data": str(end_date[0]), "span" : { "start": end_date[1][0], "end": end_date[1][1] } }
+  else:
+    result['end_date'] = error
 
 def shouldSendError(result):
   return result["line"] == None or result["begin_date"] == None
@@ -81,18 +91,10 @@ def semantic_analysis(tweet):
     error["message"] = "No disruption found"
     return error
   
-  beg_date, end_date = getTimeDisruption(tweet["text"], tweet["postedDate"])
-  if beg_date is not None:
-    result['begin_date'] = { "date": str(beg_date[0]), "start_index": beg_date[1][0], "end_index": beg_date[1][1] }
-  if end_date is not None:
-    result['end_date'] = { "date": str(end_date[0]), "start_index": end_date[1][0], "end_index": end_date[1][1] }
+  getTimeDisruption(tweet["text"], tweet["postedDate"], result)
   if not result['description']:
     result['description'] = getDescription(tweet["text"])
-  if not result['line']:
-    result['line'] = getLines(tweet["text"])
-  
-  if not result['line']:
-    result['line'] = getLineFromTwitterAccount(tweet['accountName'])
+    
   # Prefering send error if cound't anlayze well the tweet
   if shouldSendError(result):
     return error
