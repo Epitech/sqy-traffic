@@ -24,20 +24,20 @@ def getJsonData():
 # Récupérer les identifiants de lignes
 def getLines(sentence, result):
   lines_pattern = re.compile(r"((?<=Ligne )\d+|^\d+\.\d+)", re.IGNORECASE)
-  matches = lines_pattern.findall(sentence)
+  match = re.search(r"((?<=Ligne )\d+|^\d+\.\d+)", sentence)
   
-  if len(matches) >= 1:
-    result['line'] = { "data": matches[0] }
+  if match is not None:
+    result['line'] = { "data": match.group(0), "span": { "start": match.start(0), "end": match.end(0) } }
     return
   result['line'] = { "data": None, "error": "Not enough information" }
 
 # Trouver un URL dans le tweet donnant plus d'informations
 def getDescription(sentence, result):
   url_pattern = re.compile(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
-  matches = url_pattern.findall(sentence)
+  match = url_pattern.search(sentence)
   
-  if matches:
-    result['description'] = {"data" : [ x[0] for x in matches ] }
+  if match:
+    result['description'] = {"data" : match.group(0), "span": { "start": match.start(0), "end": match.end(0) } }
     return
   result['description'] = { "data": None, "error": "Not enough information" }
 
@@ -94,12 +94,8 @@ def semantic_analysis(tweet):
     return error
   
   getTimeDisruption(tweet["text"], tweet["postedDate"], result)
-  # if not result['description']:
-  #   result['description'] = 
   getDescription(tweet["text"], result)
-  
   getLines(tweet["text"], result)
-  
   if not result['line']['data']:
     getLineFromTwitterAccount(tweet['accountName'], result)  
   # Prefering send error if cound't anlayze well the tweet
