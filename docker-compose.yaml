@@ -15,7 +15,13 @@ services:
       interval: 3s
       timeout: 3s
       retries: 30
+  sqy-traffic:
+    image: "sqy-traffic:test"
+    environment:
+      - TW_BEARER_TOKEN=
+      - TW_API_URL=https://api.twitter.com/v2/
+      - USERNAME_CHECKER=PoCInnovatioon
+      - PORT=3000
 
 volumes:
   postgres-data:
-
