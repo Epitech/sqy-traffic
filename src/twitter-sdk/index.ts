@@ -110,12 +110,17 @@ export default class Twitter {
 
   async getTweets(username: string, queryParams: GetTweetsQuery): Promise<Tweet[] | undefined> {
     let formattedQuery = `query=from:${username}&tweet.fields=created_at,entities`
-    Object.entries(queryParams).forEach(([param, value]) => formattedQuery += `&${param}=${value}`)
+    Object.entries(queryParams).forEach(([param, value]) => {
+      formattedQuery += `&${param}=${value}`
+    })
 
     try {
-      const { data: tweets, meta: { next_token } } = await this.request<Tweet[], TweetsMeta>(`tweets/search/recent?${formattedQuery}`)
-      if (next_token) {
-        return tweets.concat(await this.getTweets(username, { ...queryParams, next_token }) || [])
+      const {
+        data: tweets,
+        meta: { next_token: nextToken },
+      } = await this.request<Tweet[], TweetsMeta>(`tweets/search/recent?${formattedQuery}`)
+      if (nextToken) {
+        return tweets.concat((await this.getTweets(username, { ...queryParams, next_token: nextToken })) || [])
       }
       return tweets
     } catch (err) {

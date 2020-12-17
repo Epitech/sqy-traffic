@@ -4,11 +4,7 @@ import { TrafficModule } from "./traffic-module"
 import { TwitterModule } from "./twitter-module"
 
 @Module({
-  imports: [
-    TrafficModule,
-    TwitterModule,
-    ScheduleModule.forRoot(),
-  ],
+  imports: [TrafficModule, TwitterModule, ScheduleModule.forRoot()],
   controllers: [],
   providers: [],
 })

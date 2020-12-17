@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common"
-import { Interval,  } from "@nestjs/schedule"
+import { Interval } from "@nestjs/schedule"
+import { Prisma, Tweet } from "@prisma/client"
 import Twitter, { GetTweetsQuery } from "../twitter-sdk"
 import { API_TOKEN } from "../../config/environnement"
 import { PrismaService } from "../prisma.service"
-import { Prisma, Tweet } from '@prisma/client'
 
 @Injectable()
 export default class TwitterService {
@@ -60,10 +60,10 @@ export default class TwitterService {
           },
           take: 1,
           orderBy: {
-            postedAt: "asc"
+            postedAt: "asc",
           },
-        }
-      }
+        },
+      },
     })
 
     const tweetsByAccount = (
@@ -71,7 +71,7 @@ export default class TwitterService {
         accounts.map(
           async (account): Promise<Prisma.TweetCreateInput[]> => {
             const params: GetTweetsQuery = {
-              max_results: 100
+              max_results: 100,
               // TODO: latest tweet
             }
             if (account.Tweet.length === 1) {
@@ -79,23 +79,25 @@ export default class TwitterService {
             }
             const tweets = await this.twitter.getTweets(account.name, params)
 
-            return tweets?.map((tweet) => ({
-              tweetId: tweet.id,
-              text: tweet.text,
-              author: {
-                connect: {
-                  id: account.id
-                }
-              },
-              hasDisruption: this.findDisruptionInTweet(tweet.text),
-              postedAt: new Date(Date.parse(tweet.created_at)),
-            })) || []
+            return (
+              tweets?.map((tweet) => ({
+                tweetId: tweet.id,
+                text: tweet.text,
+                author: {
+                  connect: {
+                    id: account.id,
+                  },
+                },
+                hasDisruption: this.findDisruptionInTweet(tweet.text),
+                postedAt: new Date(Date.parse(tweet.created_at)),
+              })) || []
+            )
           },
         ),
       )
-    )
-      .flat()
+    ).flat()
 
+    // TODO: replace syntax (no batch with prisma...)
     for (const tweet of tweetsByAccount) {
       try {
         await this.prisma.tweet.create({ data: tweet })
