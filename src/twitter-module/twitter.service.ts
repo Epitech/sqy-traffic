@@ -47,7 +47,7 @@ export default class TwitterService {
 
   // Every 60 --seconds--
   // *minutes for test
-  @Interval(60 * 60 *1000)
+  @Interval(60 * 60 * 1000)
   async fetchTweets(): Promise<void> {
     // TODO: use logger via nestjs
     console.info("[INFO] Cron: start fetching tweets")
