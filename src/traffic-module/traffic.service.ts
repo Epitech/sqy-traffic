@@ -1,12 +1,18 @@
 import { Injectable } from "@nestjs/common"
-import Twitter from "../twitter-sdk/twitter"
+import { Disruption } from "@prisma/client"
+import Twitter from "../twitter-sdk"
 import { API_TOKEN } from "../../config/environnement"
+import { PrismaService } from "../prisma.service"
 
 @Injectable()
 export default class TrafficService {
-  private T: Twitter
+  private readonly twitter: Twitter
 
-  constructor() {
-    this.T = new Twitter(API_TOKEN)
+  constructor(private prisma: PrismaService) {
+    this.twitter = new Twitter(API_TOKEN)
+  }
+
+  async getDisruptions(): Promise<Disruption[]> {
+    return this.prisma.disruption.findMany()
   }
 }

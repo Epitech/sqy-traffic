@@ -12,11 +12,15 @@
     "build": "tsc",
     "start": "ts-node dist/index.js",
     "start:dev": "ts-node-dev src/index.ts",
+    "dev": "docker-compose up -d --build && ts-node-dev src/index.ts",
     "clean": "rm -rf dist/ coverage/",
     "lint": "eslint src/** tests/** config/**",
     "lint:fix": "eslint --fix src/** tests/** config/**",
     "test": "jest --coverage tests",
-    "test:watch": "jest --coverage tests --watchAll"
+    "test:watch": "jest --coverage tests --watchAll",
+    "pretty": "prettier --write 'src/**/*.{ts,tsx}'",
+    "migrate": "prisma migrate dev --preview-feature",
+    "seed": "ts-node seed-database/index.ts"
   },
   "repository": {
     "type": "git",
@@ -32,11 +36,36 @@
     "url": "https://https://github.com/Epitech/sqy-traffic/issues"
   },
   "homepage": "https://https://github.com/Epitech/sqy-traffic#readme",
+  "dependencies": {
+    "@jest/globals": "^26.6.2",
+    "@nestjs/common": "^7.5.5",
+    "@nestjs/config": "^0.6.1",
+    "@nestjs/core": "^7.5.5",
+    "@nestjs/platform-express": "^7.5.5",
+    "@nestjs/schedule": "^0.4.1",
+    "@nestjs/swagger": "^4.7.5",
+    "@prisma/client": "2.13.0",
+    "axios": "^0.21.0",
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "env-var": "^7.0.0",
+    "husky": "^4.3.0",
+    "jest": "^26.6.3",
+    "pg": "^8.5.1",
+    "postgres": "^1.0.2",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.6.3",
+    "ts-jest": "^26.4.4",
+    "ts-node-dev": "^1.0.0",
+    "winston": "^3.3.3"
+  },
   "devDependencies": {
     "@nestjs/cli": "^7.5.3",
     "@nestjs/schematics": "^7.2.2",
     "@nestjs/testing": "^7.5.5",
+    "@prisma/cli": "2.13.0",
     "@types/cors": "^2.8.8",
+    "@types/cron": "^1.7.2",
     "@types/express": "^4.17.9",
     "@types/jest": "^26.0.16",
     "@types/node": "^14.14.10",
@@ -50,21 +79,5 @@
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.2.1",
     "typescript": "^4.1.2"
-  },
-  "dependencies": {
-    "@jest/globals": "^26.6.2",
-    "@nestjs/common": "^7.5.5",
-    "@nestjs/config": "^0.6.1",
-    "@nestjs/core": "^7.5.5",
-    "@nestjs/platform-express": "^7.5.5",
-    "@nestjs/swagger": "^4.7.5",
-    "axios": "^0.21.0",
-    "dotenv": "^8.2.0",
-    "env-var": "^7.0.0",
-    "husky": "^4.3.0",
-    "jest": "^26.6.3",
-    "ts-jest": "^26.4.4",
-    "ts-node-dev": "^1.0.0",
-    "winston": "^3.3.3"
   }
 }
