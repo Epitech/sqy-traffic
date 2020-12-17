@@ -47,8 +47,11 @@ export default class TwitterService {
 
   // Every 60 --seconds--
   // *minutes for test
-  @Interval(60 * 60 * 1000)
+  @Interval(60 * 60 *1000)
   async fetchTweets(): Promise<void> {
+    // TODO: use logger via nestjs
+    console.info("[INFO] Cron: start fetching tweets")
+
     const accounts = await this.prisma.tweeterAccount.findMany({
       select: {
         id: true,
@@ -57,14 +60,18 @@ export default class TwitterService {
           // Latest tweet
           select: {
             tweetId: true,
+            postedAt: true,
           },
           take: 1,
           orderBy: {
-            postedAt: "asc",
+            postedAt: "desc",
           },
         },
       },
     })
+
+    const sevenDaysInMS = 7 * 24 * 60 * 60 * 1000
+    const oldestValidDateForSinceId = new Date().getTime() - sevenDaysInMS
 
     const tweetsByAccount = (
       await Promise.all(
@@ -72,10 +79,10 @@ export default class TwitterService {
           async (account): Promise<Prisma.TweetCreateInput[]> => {
             const params: GetTweetsQuery = {
               max_results: 100,
-              // TODO: latest tweet
             }
-            if (account.Tweet.length === 1) {
-              params.since_id = account.Tweet[0].tweetId
+            const latestTweetForAccount = account.Tweet[0]
+            if (latestTweetForAccount && latestTweetForAccount.postedAt.getTime() > oldestValidDateForSinceId) {
+              params.since_id = latestTweetForAccount.tweetId
             }
             const tweets = await this.twitter.getTweets(account.name, params)
 
@@ -102,9 +109,11 @@ export default class TwitterService {
       try {
         await this.prisma.tweet.create({ data: tweet })
       } catch (e) {
-        //
+        console.error(e)
       }
     }
+
+    console.info(`[INFO] Cron: ${tweetsByAccount.length} fetched`)
   }
 
   async getTweets(): Promise<Tweet[]> {

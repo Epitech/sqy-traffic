@@ -123,8 +123,13 @@ export default class Twitter {
         return tweets.concat((await this.getTweets(username, { ...queryParams, next_token: nextToken })) || [])
       }
       return tweets
-    } catch (err) {
-      console.error(err as AxiosError)
+    } catch (e) {
+      if (e.isAxiosError) {
+        const err = e as AxiosError
+        console.error(err.response?.data || err.message)
+      } else {
+        console.error(e)
+      }
     }
     return undefined
   }
