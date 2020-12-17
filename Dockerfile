@@ -17,9 +17,11 @@ WORKDIR /app
 ENV     PORT                  3000
 ENV     USERNAME_CHECKER      PoCInnovation
 ENV     TW_API_URL            https://api.twitter.com/v2
-ENV     TW_BEARER_TOKEN       ""
+ENV     TW_BEARER_TOKEN       "TOKEN"
+ENV     NODE_ENV              production
 
+COPY --from=build /app/dist              /app
+COPY --from=build /app/package-lock.json /app
 
-COPY --from=build /app/dist /app
-
-CMD ["node", "/app/dist/src/index.js"]
+RUN NODE_ENV=production npm ci
+CMD ["node", "/app/src/index.js"]
