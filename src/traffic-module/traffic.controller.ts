@@ -6,8 +6,9 @@ import { version } from "../../package.json"
 export default class TrafficController {
   constructor(private readonly trafficService: TrafficService) {}
 
+  // TODO
   @Get()
-  async getDisruptions(): Promise<string> {
-    return "GET /api/.../disruptions"
+  async getDisruptions(): Promise<any> {
+    return this.trafficService.getDisruptions()
   }
 }
