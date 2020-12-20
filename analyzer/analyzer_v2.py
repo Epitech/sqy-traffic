@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
+earl#!/usr/bin/env python3
 import requests
 
 
 class RequestHandler:
-  def __init__(self, url="https://127.0.0.1:3000/api/0.0.1/twitter"):
+  def __init__(self, url="http://127.0.0.1:3000/api/0.0.1/twitter"):
     self.url = url
     
   def _call(self, method, endpoint, headers = {}, body = {}):
@@ -23,4 +23,7 @@ class RequestHandler:
     except Exception:
       return {}
     
- 
+if __name__ == "__main__":
+  caller = RequestHandler()
+  tweets = caller.get_tweets_to_process()
+  print(tweets)
