@@ -2,13 +2,14 @@ FROM node:15.4.0-alpine3.10 AS build
 
 WORKDIR  /app
 
-COPY     ./config            ./config
-COPY     ./src               ./src
-COPY     ./package.json      ./package.json
-COPY     ./package-lock.json ./package-lock.json
-COPY     ./tsconfig.json     ./tsconfig.json
+COPY     ./config             ./config
+COPY     ./src                ./src
+COPY     ./package.json       ./package.json
+COPY     ./package-lock.json  ./package-lock.json
+COPY     ./tsconfig.json      ./tsconfig.json
+COPY     ./prisma             ./prisma
 
-RUN      npm install && npm ci && npm run build
+RUN      npm ci && npm run generate && npm run build
 
 FROM node:15.4.0-alpine3.10
 
@@ -22,6 +23,7 @@ ENV     NODE_ENV              production
 
 COPY --from=build /app/dist              /app
 COPY --from=build /app/package-lock.json /app
+COPY --from=build /app/prisma            /app
 
-RUN NODE_ENV=production npm ci
+RUN NODE_ENV=production npm ci && npm run generate
 CMD ["node", "/app/src/index.js"]
