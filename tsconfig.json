@@ -67,8 +67,9 @@
   "include": [
     "src/**/*.ts",
     "config/**/*.ts",
-    "tests/**/*.ts"
-  ],
+    "tests/**/*.ts",
+    "node_modules/gtfs-realtime-bindings/index.d.ts"
+   ],
   "exclude": [
     "node_modules",
     "seed-database/index.ts"
