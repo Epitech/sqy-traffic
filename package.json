@@ -2,7 +2,7 @@
   "name": "sqy-traffic",
   "version": "0.0.1",
   "description": "Backend API for traffic disruption analysis",
-  "main": "src/index.ts",
+  "main": "src/main.ts",
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint && npm run build && npm run clean"
@@ -10,9 +10,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "ts-node dist/index.js",
-    "start:dev": "ts-node-dev src/index.ts",
-    "dev": "docker-compose up -d --build && ts-node-dev src/index.ts",
+    "start": "ts-node dist/main.js",
+    "start:dev": "nest start --watch",
+    "dev": "docker-compose up -d --build && ts-node-dev src/main.ts",
     "clean": "rm -rf dist/ coverage/",
     "lint": "eslint src/** tests/** config/**",
     "lint:fix": "eslint --fix src/** tests/** config/**",
@@ -49,6 +49,7 @@
     "cron": "^1.8.2",
     "dotenv": "^8.2.0",
     "env-var": "^7.0.0",
+    "gtfs-realtime-bindings": "^0.0.6",
     "husky": "^4.3.0",
     "jest": "^26.6.3",
     "pg": "^8.5.1",
