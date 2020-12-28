@@ -4,36 +4,36 @@ import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
 import { PrismaService } from "./prisma.service"
 
 enum Incrementality {
-  FULL_DATASET = 0,
-  DIFFERENTIAL = 1,
+  FULL_DATASET = "FULL_DATASET",
+  DIFFERENTIAL = "DIFFERENTIAL",
 }
 
 enum AlertCause {
-  UNKNOWN_CAUSE = 1,
-  OTHER_CAUSE = 2,
-  TECHNICAL_PROBLEM = 3,
-  STRIKE = 4,
-  DEMONSTRATION = 5,
-  ACCIDENT = 6,
-  HOLIDAY = 7,
-  WEATHER = 8,
-  MAINTENANCE = 9,
-  CONSTRUCTION = 10,
-  POLICE_ACTIVITY = 11,
-  MEDICAL_EMERGENCY = 12,
+  UNKNOWN_CAUSE = "UNKNOWN_CAUSE",
+  OTHER_CAUSE = "OTHER_CAUSE",
+  TECHNICAL_PROBLEM = "TECHNICAL_PROBLEM",
+  STRIKE = "STRIKE",
+  DEMONSTRATION = "DEMONSTRATION",
+  ACCIDENT = "ACCIDENT",
+  HOLIDAY = "HOLIDAY",
+  WEATHER = "WEATHER",
+  MAINTENANCE = "MAINTENANCE",
+  CONSTRUCTION = "CONSTRUCTION",
+  POLICE_ACTIVITY = "POLICE_ACTIVITY",
+  MEDICAL_EMERGENCY = "MEDICAL_EMERGENCY",
 }
 
 enum AlertEffect {
-  NO_SERVICE = 1,
-  REDUCED_SERVICE = 2,
-  SIGNIFICANT_DELAYS = 3,
-  DETOUR = 4,
-  ADDITIONAL_SERVICE = 5,
-  MODIFIED_SERVICE = 6,
-  OTHER_EFFECT = 7,
-  UNKNOWN_EFFECT = 8,
-  STOP_MOVED = 9,
-  NO_EFFECT = 10,
+  NO_SERVICE = "NO_SERVICE",
+  REDUCED_SERVICE = "REDUCED_SERVICE",
+  SIGNIFICANT_DELAYS = "SIGNIFICANT_DELAYS",
+  DETOUR = "DETOUR",
+  ADDITIONAL_SERVICE = "ADDITIONAL_SERVICE",
+  MODIFIED_SERVICE = "MODIFIED_SERVICE",
+  OTHER_EFFECT = "OTHER_EFFECT",
+  UNKNOWN_EFFECT = "UNKNOWN_EFFECT",
+  STOP_MOVED = "STOP_MOVED",
+  NO_EFFECT = "NO_EFFECT",
 }
 
 enum AlertSeverity {
@@ -45,30 +45,105 @@ enum AlertSeverity {
 
 interface Disruption {
   // Id of the line affected by the disruption
-  route_id?: number
-  // Id of the entitity affected by the disruption
-  entity_id?: number
-  // Start_date
+  routeId?: number
+  // Start_date timestamp
+  start_date: number
+  // End_date timestamp
+  end_date?: number
+  // cause
+  cause?: AlertCause
+  // effect
+  effect?: AlertEffect
+  // severity
+  severityLevel?: AlertSeverity
+}
+
+interface Entity {
+  // Whole agency disturbed
+  agencyId?: string
+  // Which route
+  routeId?: string
+  // Specific trip on a route
+  trip?: string
+  // Specific stop on a route
+  stopId?: string
+}
+
+interface AlertPeriod {
+  start: number
+  end: number
+}
+
+interface Translation {
+  language: string
+
+  text: string
+}
+
+interface ServiceAlert {
+  // Periods Affected by the Disruption
+  activePeriod?: AlertPeriod[]
+  // cause
+  cause: AlertCause
+  // effect
+  effect: AlertEffect
+  // severity
+  serverityLevel: AlertSeverity
+  // networks affected by the disruption
+  informedEntity: Entity[]
+  // url of tweet for information
+  url?: Translation[]
+}
+
+interface EntityBuilder {
+  // Id of the entity (vehicule, train...)
+  id: string
+  // Is entity deleted ?
+  isDeleted?: boolean
+  // Information of the alert
+  alert?: ServiceAlert
 }
 
 @Injectable()
 export class GtfsService {
   constructor(private prisma: PrismaService) {}
 
-  async convertDisruptionToEntity(disruption: Disruption) {
+  async determineDeletion(alert: ServiceAlert): Promise<boolean> {
+    return false
+  }
 
+  async convertDisruptionToAlert(disruption: Disruption): Promise<ServiceAlert> {
+    return {
+      cause: AlertCause.UNKNOWN_CAUSE,
+      effect: AlertEffect.UNKNOWN_EFFECT,
+      serverityLevel: AlertSeverity.UNKNOWN_SEVERITY,
+      informedEntity: [],
+    }
+  }
+
+  async createFeedEntity(twitter_id: string, disruption: Disruption): Promise<any> {
+    try {
+      const entityBuilder: EntityBuilder = { id: twitter_id, isDeleted: false }
+
+      entityBuilder.alert = await this.convertDisruptionToAlert(disruption)
+      entityBuilder.isDeleted = await this.determineDeletion(entityBuilder.alert)
+      return GtfsRealtimeBindings.transit_realtime.FeedEntity.fromObject(entityBuilder)
+    } catch (e) {
+      console.log(e)
+    }
+    return null
   }
 
   async getUnprocessedDisruption(): Promise<Buffer> {
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",
-      incrementality: "DIFFERENTIAL",
+      incrementality: Incrementality.FULL_DATASET,
       timestamp: Math.floor(new Date(Date.now()).getTime() / 1000).toString(),
     }
     const message = GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject()
+
     return GtfsRealtimeBindings.transit_realtime.FeedMessage.encode(message, null).finish()
   }
-
 }
 /**
  * Disruption:
