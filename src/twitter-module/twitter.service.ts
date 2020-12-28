@@ -52,10 +52,10 @@ export default class TwitterService {
     // TODO: use logger via nestjs
     console.info("[INFO] Cron: start fetching tweets")
 
-    const accounts = await this.prisma.tweeterAccount.findMany({
+    const accounts = await this.prisma.network.findMany({
       select: {
         id: true,
-        name: true,
+        tweeterAccount: true,
         Tweet: {
           // Latest tweet
           select: {
@@ -77,6 +77,11 @@ export default class TwitterService {
       await Promise.all(
         accounts.map(
           async (account): Promise<Prisma.TweetCreateInput[]> => {
+            // Noctilien, stile ?
+            if (!account.tweeterAccount) {
+              return []
+            }
+
             const params: GetTweetsQuery = {
               max_results: 100,
             }
@@ -84,7 +89,7 @@ export default class TwitterService {
             if (latestTweetForAccount && latestTweetForAccount.postedAt.getTime() > oldestValidDateForSinceId) {
               params.since_id = latestTweetForAccount.tweetId
             }
-            const tweets = await this.twitter.getTweets(account.name, params)
+            const tweets = await this.twitter.getTweets(account.tweeterAccount, params)
 
             return (
               tweets?.map((tweet) => ({
