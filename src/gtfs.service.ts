@@ -45,7 +45,7 @@ enum AlertSeverity {
 
 interface Disruption {
   // Id of the line affected by the disruption
-  routeId?: number
+  routeId?: string
   // Start_date timestamp
   start_date: number
   // End_date timestamp
@@ -135,13 +135,32 @@ export class GtfsService {
   }
 
   async getUnprocessedDisruption(): Promise<Buffer> {
+    const disruptions: Disruption[] = [
+      {
+        routeId: "231",
+        start_date: 13465762879,
+        end_date: 13465862879,
+        cause: AlertCause.ACCIDENT,
+        effect: AlertEffect.DETOUR,
+        severityLevel: AlertSeverity.INFO,
+      },
+    ]
+
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",
       incrementality: Incrementality.FULL_DATASET,
       timestamp: Math.floor(new Date(Date.now()).getTime() / 1000).toString(),
     }
-    const message = GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject()
-
+    const entities = []
+    for (const disruption of disruptions) {
+      entities.push(await this.createFeedEntity("TWITTER_ID", disruption))
+    }
+    const messageObject = {
+      header: headerTemplate,
+      entity: entities.filter((e) => e),
+    }
+    const message = GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject(messageObject)
+    console.log(message)
     return GtfsRealtimeBindings.transit_realtime.FeedMessage.encode(message, null).finish()
   }
 }

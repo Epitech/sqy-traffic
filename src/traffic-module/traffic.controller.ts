@@ -1,4 +1,6 @@
-import { Controller, Get, Header, HttpException, HttpStatus } from "@nestjs/common"
+import { Controller, Get, Header, HttpException, HttpStatus, Res } from "@nestjs/common"
+import { Response } from "express"
+import { Readable } from "stream"
 import TrafficService from "./traffic.service"
 import { version } from "../../package.json"
 import { GtfsService } from "../gtfs.service"
@@ -9,11 +11,17 @@ export default class TrafficController {
 
   @Get()
   @Header("Content-Type", "application/octet-stream")
-  async getDisruptions(): Promise<Buffer> {
-    const encodedDisruptions = this.gtfsService.getUnprocessedDisruption()
+  async getDisruptions(@Res() res: Response): Promise<void> {
+    const encodedDisruptions: Buffer = await this.gtfsService.getUnprocessedDisruption()
     if (!encodedDisruptions) {
       throw new HttpException("Not Modified", HttpStatus.NOT_MODIFIED)
     }
-    return encodedDisruptions
+    res.set({
+      "Content-Length": encodedDisruptions.length,
+    })
+    const readable = new Readable()
+    readable.push(encodedDisruptions)
+    readable.push(null)
+    readable.pipe(res)
   }
 }
