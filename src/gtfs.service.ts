@@ -44,10 +44,8 @@ enum AlertSeverity {
 }
 
 interface Disruption {
-  // Id of the line affected by the disruption
-  routeId?: string
   // Start_date timestamp
-  start_date: number
+  start_date?: number
   // End_date timestamp
   end_date?: number
   // cause
@@ -56,6 +54,8 @@ interface Disruption {
   effect?: AlertEffect
   // severity
   severityLevel?: AlertSeverity
+  // description
+  description?: string
 }
 
 interface Entity {
@@ -70,29 +70,31 @@ interface Entity {
 }
 
 interface AlertPeriod {
-  start: number
-  end: number
+  start?: number
+  end?: number
 }
 
 interface Translation {
   language: string
 
-  text: string
+  text?: string
 }
 
 interface ServiceAlert {
   // Periods Affected by the Disruption
   activePeriod?: AlertPeriod[]
   // cause
-  cause: AlertCause
+  cause?: AlertCause
   // effect
-  effect: AlertEffect
+  effect?: AlertEffect
   // severity
-  serverityLevel: AlertSeverity
+  serverityLevel?: AlertSeverity
   // networks affected by the disruption
-  informedEntity: Entity[]
-  // url of tweet for information
+  informedEntity?: Entity[]
+  // url of tweet as information
   url?: Translation[]
+  // description for some detials
+  description?: Translation[]
 }
 
 interface EntityBuilder {
@@ -113,16 +115,25 @@ export class GtfsService {
   }
 
   async convertDisruptionToAlert(disruption: Disruption): Promise<ServiceAlert> {
-    return {
-      cause: AlertCause.UNKNOWN_CAUSE,
-      effect: AlertEffect.UNKNOWN_EFFECT,
-      serverityLevel: AlertSeverity.UNKNOWN_SEVERITY,
-      informedEntity: [],
+    const alertBuilder: ServiceAlert = {}
+
+    alertBuilder.serverityLevel = disruption.severityLevel ?? AlertSeverity.UNKNOWN_SEVERITY
+    alertBuilder.cause = disruption.cause ?? AlertCause.UNKNOWN_CAUSE
+    alertBuilder.effect = disruption.effect ?? AlertEffect.UNKNOWN_EFFECT
+    alertBuilder.url = [{ language: "fr", text: "TWEET_URL" }]
+    alertBuilder.description = [{ language: "fr", text: disruption.description ?? "" }]
+    if (disruption.start_date || disruption.end_date) {
+      alertBuilder.activePeriod = [{ start: disruption.start_date, end: disruption.end_date }]
     }
+
+    // From analysis conclusion, check which ways are disrupted from Mapper to get the informed entity (route_id?,  stop_id ?)
+    alertBuilder.informedEntity = []
+    return alertBuilder
   }
 
   async createFeedEntity(twitter_id: string, disruption: Disruption): Promise<any> {
     try {
+      // The Id of the entity may be the known on the netwo
       const entityBuilder: EntityBuilder = { id: twitter_id, isDeleted: false }
 
       entityBuilder.alert = await this.convertDisruptionToAlert(disruption)
@@ -137,12 +148,12 @@ export class GtfsService {
   async getUnprocessedDisruption(): Promise<Buffer> {
     const disruptions: Disruption[] = [
       {
-        routeId: "231",
         start_date: 13465762879,
         end_date: 13465862879,
         cause: AlertCause.ACCIDENT,
         effect: AlertEffect.DETOUR,
         severityLevel: AlertSeverity.INFO,
+        description: "Some description of the alert from tweet text",
       },
     ]
 
@@ -160,7 +171,7 @@ export class GtfsService {
       entity: entities.filter((e) => e),
     }
     const message = GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject(messageObject)
-    console.log(message)
+    console.log(GtfsRealtimeBindings.transit_realtime.FeedMessage.verify(message))
     return GtfsRealtimeBindings.transit_realtime.FeedMessage.encode(message, null).finish()
   }
 }
