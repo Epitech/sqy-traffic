@@ -156,12 +156,13 @@ export class GtfsService {
         description: "Some description of the alert from tweet text",
       },
     ]
-
+    // Header du message GTFS-RT
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",
       incrementality: Incrementality.FULL_DATASET,
       timestamp: Math.floor(new Date(Date.now()).getTime() / 1000).toString(),
     }
+    // Construction des FeedEntity
     const entities = []
     for (const disruption of disruptions) {
       entities.push(await this.createFeedEntity("TWITTER_ID", disruption))
@@ -171,16 +172,7 @@ export class GtfsService {
       entity: entities.filter((e) => e),
     }
     const message = GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject(messageObject)
-    console.log(GtfsRealtimeBindings.transit_realtime.FeedMessage.verify(message))
+    console.log(GtfsRealtimeBindings.transit_realtime.FeedMessage.verify(message)) // if null -> GOOOD
     return GtfsRealtimeBindings.transit_realtime.FeedMessage.encode(message, null).finish()
   }
 }
-/**
- * Disruption:
- * - Entity affected
- * - trip_id / route_id
- * - begin_date
- * - end_date (facultatif)
- * - cause
- * - effect
- */
