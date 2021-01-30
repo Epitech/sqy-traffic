@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common"
 // import { Disruption } from "@prisma/client"
 import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
-import { PrismaService } from "./prisma.service"
+import { PrismaService } from "../prisma.service"
 
 enum Incrementality {
   FULL_DATASET = "FULL_DATASET",

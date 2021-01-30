@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common"
-import { GtfsService } from "../gtfs.service"
+import { GtfsService } from "../gtfs-service/gtfs.service"
 import { PrismaService } from "../prisma.service"
 import TrafficController from "./traffic.controller"
 import TrafficService from "./traffic.service"
