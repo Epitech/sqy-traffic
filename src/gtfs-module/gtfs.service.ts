@@ -18,10 +18,10 @@ export class GtfsService {
     const alertBuilder: GtfsData.ServiceAlert = {}
 
     alertBuilder.serverityLevel = disruption.severity ?? GtfsData.AlertSeverity.UNKNOWN_SEVERITY
-    alertBuilder.cause = <any>disruption.cause // ?? GtfsData.AlertCause.UNKNOWN_CAUSE
-    alertBuilder.effect = <any>disruption.effect // ?? GtfsData.AlertEffect.UNKNOWN_EFFECT
-    alertBuilder.url = [{ language: "fr", text: disruption.tweet.tweetUrl }]
-    alertBuilder.description = [{ language: "fr", text: disruption.description ?? "" }]
+    alertBuilder.cause = <any>disruption.cause
+    alertBuilder.effect = <any>disruption.effect
+    alertBuilder.url = [{ language: "fr", text: disruption.tweet?.tweetUrl ?? "NO_URL" }]
+    alertBuilder.description = [{ language: "fr", text: disruption.description ?? "NO_DESCRIPTION" }]
     if (disruption.start_date || disruption.end_date) {
       alertBuilder.activePeriod = [{ start: disruption.start_date.getTime(), end: disruption.end_date.getTime() }]
     }
@@ -36,10 +36,10 @@ export class GtfsService {
     return alertBuilder
   }
 
-  async createFeedEntity(twitter_id: string, disruption: Disruption): Promise<any> {
+  async createFeedEntity(twitter_id: string | null, disruption: Disruption): Promise<any> {
     try {
       // The Id of the entity may be the known on the netwo
-      const entityBuilder: GtfsData.EntityBuilder = { id: twitter_id, isDeleted: false }
+      const entityBuilder: GtfsData.EntityBuilder = { id: twitter_id ?? "NO_ID", isDeleted: false }
 
       entityBuilder.alert = await this.convertDisruptionToAlert(disruption)
       entityBuilder.isDeleted = await this.determineDeletion(entityBuilder.alert)
@@ -54,19 +54,7 @@ export class GtfsService {
     // Need to get Disruptions from Databases
 
     const disruptions = await this.disruptionService.getUnprocessedDisruptions()
-    // const disruptions: GtfsData.Disruption[] = [
-    //   {
-    //     routeId: "1020C",
-    //     tweetId: "TWEET_ID",
-    //     tweetURL: "TWEET_URL",
-    //     start_date: 13465762879,
-    //     end_date: 13465862879,
-    //     cause: GtfsData.AlertCause.ACCIDENT,
-    //     effect: GtfsData.AlertEffect.DETOUR,
-    //     severityLevel: GtfsData.AlertSeverity.INFO,
-    //     description: "Some description of the alert from tweet text",
-    //   },
-    // ]
+    console.log(disruptions)
     // Header du message GTFS-RT
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",
@@ -75,7 +63,7 @@ export class GtfsService {
     }
     // Construction des FeedEntity
     const entities = disruptions.map(async (disruption) => {
-      return this.createFeedEntity(disruption.tweetId, disruption)
+      return this.createFeedEntity(disruption?.tweetId, disruption)
     })
     const messageObject = {
       header: headerTemplate,
