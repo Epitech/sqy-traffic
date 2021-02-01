@@ -38,27 +38,6 @@ export enum AlertSeverity {
   SEVERE = 4,
 }
 
-export interface Disruption {
-  // Route ID :  ID de la ligne
-  routeId: string
-  // Start_date timestamp
-  start_date?: number
-  // End_date timestamp
-  end_date?: number
-  // cause
-  cause?: AlertCause
-  // effect
-  effect?: AlertEffect
-  // severity
-  severityLevel?: AlertSeverity
-  // description
-  description?: string
-  // Tweet id
-  tweetId: string
-  // Tweet URL
-  tweetURL: string
-}
-
 export interface Entity {
   // Whole agency disturbed
   agencyId?: string
