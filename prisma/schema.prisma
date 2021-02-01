@@ -17,7 +17,7 @@ model TweeterAccount {
 model Tweet {
   id        String @id @default(uuid())
   tweetId   String @unique
-  tweetUrl  String  @unique
+  tweetUrl  String
 
   text     String
   postedAt DateTime
