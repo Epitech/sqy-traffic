@@ -32,16 +32,16 @@ model Tweet {
 }
 
 model Disruption {
-  id      String  @id @default(uuid())
-  tweet   Tweet?  @relation(fields: [tweetId], references: [id])
-  tweetId String?
+  id           String  @id @default(uuid())
+  tweet        Tweet   @relation(fields: [tweetId], references: [id])
+  tweetId      String
   
-  routeId String
+  routeId      String
   start_date   DateTime
   end_date     DateTime
   cause        String
   effect       String
-  severity     String
+  severity     Int
   description  String
   
   wasProcessed Boolean
