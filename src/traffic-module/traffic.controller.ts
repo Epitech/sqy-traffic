@@ -12,7 +12,7 @@ export default class TrafficController {
   @Get()
   @Header("Content-Type", "application/octet-stream")
   async getDisruptions(@Res() res: Response): Promise<void> {
-    const encodedDisruptions: Buffer = await this.gtfsService.getUnprocessedDisruption()
+    const encodedDisruptions: Buffer = await this.gtfsService.getEncodedDisruptions()
     if (!encodedDisruptions) {
       throw new HttpException("Not Modified", HttpStatus.NOT_MODIFIED)
     }

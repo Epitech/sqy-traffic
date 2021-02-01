@@ -15,8 +15,9 @@ model TweeterAccount {
 }
 
 model Tweet {
-  id      String @id @default(uuid())
-  tweetId String @unique
+  id        String @id @default(uuid())
+  tweetId   String @unique
+  tweetUrl  String  @unique
 
   text     String
   postedAt DateTime
@@ -34,4 +35,15 @@ model Disruption {
   id      String  @id @default(uuid())
   tweet   Tweet?  @relation(fields: [tweetId], references: [id])
   tweetId String?
+  
+  routeId String
+  start_date   DateTime
+  end_date     DateTime
+  cause        String
+  effect       String
+  severity     String
+  description  String
+  
+  wasProcessed Boolean
+  createdAt DateTime @default(now())
 }

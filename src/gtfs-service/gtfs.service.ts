@@ -49,7 +49,11 @@ export class GtfsService {
     return null
   }
 
-  async getUnprocessedDisruption(): Promise<Buffer> {
+  async getEncodedDisruptions(): Promise<Buffer> {
+    // Need to get Disruptions from Databases
+
+    // const disruptions =
+
     const disruptions: GtfsData.Disruption[] = [
       {
         routeId: "1020C",
