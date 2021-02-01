@@ -20,7 +20,8 @@
     "test:watch": "jest --coverage tests --watchAll",
     "pretty": "prettier --write 'src/**/*.{ts,tsx}'",
     "migrate": "prisma migrate dev --preview-feature",
-    "seed": "ts-node seed-database/index.ts"
+    "seed": "ts-node seed-database/index.ts",
+    "generate": "prisma generate"
   },
   "repository": {
     "type": "git",
