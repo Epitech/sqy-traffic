@@ -3,7 +3,7 @@ import { Response } from "express"
 import { Readable } from "stream"
 import TrafficService from "./traffic.service"
 import { version } from "../../package.json"
-import { GtfsService } from "../gtfs-service/gtfs.service"
+import { GtfsService } from "../gtfs-module/gtfs.service"
 
 @Controller(`api/${version}/disruptions`)
 export default class TrafficController {
