@@ -9,9 +9,9 @@ import * as GtfsData from "./gtfs.data"
 export class GtfsService {
   constructor(private prisma: PrismaService, private disruptionService: DisruptionService) {}
 
-  async determineDeletion(alert: GtfsData.ServiceAlert): Promise<boolean> {
+  determineDeletion(severity: GtfsData.AlertSeverity): boolean {
     // Choose how to deletion (we have the whole line in the Disruption)
-    return false
+    return severity === GtfsData.AlertSeverity.SEVERE
   }
 
   async convertDisruptionToAlert(disruption: Disruption): Promise<GtfsData.ServiceAlert> {
@@ -21,7 +21,7 @@ export class GtfsService {
     alertBuilder.cause = <any>disruption.cause
     alertBuilder.effect = <any>disruption.effect
     alertBuilder.url = [{ language: "fr", text: disruption.tweet?.tweetUrl ?? "NO_URL" }]
-    alertBuilder.description = [{ language: "fr", text: disruption.description ?? "NO_DESCRIPTION" }]
+    alertBuilder.description = [{ language: "fr", text: disruption.tweet.text }]
     if (disruption.start_date || disruption.end_date) {
       alertBuilder.activePeriod = [{ start: disruption.start_date.getTime(), end: disruption.end_date.getTime() }]
     }
@@ -39,10 +39,12 @@ export class GtfsService {
   async createFeedEntity(twitter_id: string | null, disruption: Disruption): Promise<any> {
     try {
       // The Id of the entity may be the known on the netwo
-      const entityBuilder: GtfsData.EntityBuilder = { id: twitter_id ?? "NO_ID", isDeleted: false }
+      const entityBuilder: GtfsData.EntityBuilder = {
+        id: twitter_id ?? "NO_ID",
+        isDeleted: this.determineDeletion(disruption.severity),
+      }
 
       entityBuilder.alert = await this.convertDisruptionToAlert(disruption)
-      entityBuilder.isDeleted = await this.determineDeletion(entityBuilder.alert)
       return GtfsRealtimeBindings.transit_realtime.FeedEntity.fromObject(entityBuilder)
     } catch (e) {
       console.log(e)
@@ -54,7 +56,6 @@ export class GtfsService {
     // Need to get Disruptions from Databases
 
     const disruptions = await this.disruptionService.getUnprocessedDisruptions()
-    console.log(disruptions)
     // Header du message GTFS-RT
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",
@@ -62,12 +63,14 @@ export class GtfsService {
       timestamp: Math.floor(new Date(Date.now()).getTime() / 1000).toString(),
     }
     // Construction des FeedEntity
-    const entities = disruptions.map(async (disruption) => {
-      return this.createFeedEntity(disruption?.tweetId, disruption)
-    })
+    const entities = await Promise.all(
+      disruptions.map((disruption) => {
+        return this.createFeedEntity(disruption.tweet.tweetId, disruption)
+      }),
+    )
     const messageObject = {
       header: headerTemplate,
-      entity: entities.filter((e) => e),
+      entity: entities,
     }
     const message = GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject(messageObject)
     console.log(GtfsRealtimeBindings.transit_realtime.FeedMessage.verify(message)) // if null -> GOOOD
