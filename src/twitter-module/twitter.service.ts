@@ -89,7 +89,7 @@ export default class TwitterService {
             return (
               tweets?.map((tweet) => ({
                 tweetId: tweet.id,
-                tweetUrl: "", // Replace by the dynamical URL
+                tweetUrl: `https://twitter.com/${account.name}`,
                 text: tweet.text,
                 author: {
                   connect: {
