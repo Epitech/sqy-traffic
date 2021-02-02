@@ -33,15 +33,15 @@ jobs:
       - run: npm ci
       - run: npm run test
 
-  build:
-    name: Build project
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - run: npm ci
-      - run: npm run clean
-      - run: npm run build
+  # build:
+  #   name: Build project
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 14
+  #     - run: npm ci
+  #     - run: npm run clean
+  #     - run: npm run build
   
