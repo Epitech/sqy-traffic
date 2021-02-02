@@ -21,6 +21,10 @@ module.exports = {
 		"plugin:prettier/recommended"
 	],
 	rules: {
-		// Add new rules here
+		"import/prefer-default-export": "off",
+		"class-methods-use-this": "off",
+		"no-console": "off",
+		"no-restricted-syntax": "off",
+		"no-await-in-loop": "off"
 	}
 }
