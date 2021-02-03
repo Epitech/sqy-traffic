@@ -7,11 +7,24 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model TweeterAccount {
+model Network {
   id String @id @default(uuid())
 
-  name  String  @unique
-  Tweet Tweet[]
+  tweeterAccount  String?
+  networkName     String  @unique
+  instantSystemId String
+  Tweet           Tweet[]
+  Lines           Lines[]
+}
+
+model Lines {
+  id String @id @default(uuid())
+
+  name            String @unique
+  instantSystemId String
+
+  network   Network @relation(fields: [networkId], references: [id])
+  networkId String
 }
 
 model Tweet {
@@ -25,7 +38,7 @@ model Tweet {
   hasDisruption Boolean
   Disruption    Disruption?
 
-  author   TweeterAccount @relation(fields: [authorId], references: [id])
+  author   Network @relation(fields: [authorId], references: [id])
   authorId String
 
   createdAt DateTime @default(now())
