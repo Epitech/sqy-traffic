@@ -85,3 +85,37 @@ export interface EntityBuilder {
   // Information of the alert
   alert?: ServiceAlert
 }
+
+/**
+ * Model Tweet
+ */
+
+export type Tweet = {
+  id: string
+  tweetId: string
+  tweetUrl: string
+  text: string
+  postedAt: Date
+  hasDisruption: boolean
+  authorId: string
+  createdAt: Date
+}
+
+/**
+* Model Disruption
+*/
+
+export type DisruptionWithTweet = {
+  id: string
+  tweetId: string
+  routeId: string
+  start_date: Date
+  end_date: Date
+  cause: string
+  effect: string
+  severity: number
+  description: string
+  wasProcessed: boolean
+  createdAt: Date
+  tweet: Tweet
+}

@@ -8,20 +8,30 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - PG_CONNECTION_STRING=postgres://root:root@localhost:5432/postgres
     ports:
       - 127.0.0.1:5432:5432
+    networks:
+      - sqy
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 3s
       timeout: 3s
       retries: 30
   sqy-traffic:
-    image: "sqy-traffic:test"
+    build: .
+    depends_on:
+      - postgres
+    networks:
+      - sqy
     environment:
-      - TW_BEARER_TOKEN=
+      - TW_BEARER_TOKEN=AAAAAAAAAAAAAAAAAAAAAEwlKQEAAAAA%2FaxU%2F9GAfdDInpH88muoBnD2wIY%3DO8W9TskqivJkIlAdUCVfLAw6YOkiNR12R28SjZYIuDwONSWk0u
       - TW_API_URL=https://api.twitter.com/v2/
       - USERNAME_CHECKER=PoCInnovatioon
       - PORT=3000
+      - PG_CONNECTION_STRING=postgres://root:root@postgres:5432/postgres
 
 volumes:
   postgres-data:
+networks:
+  sqy:

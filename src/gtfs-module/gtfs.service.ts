@@ -14,7 +14,7 @@ export class GtfsService {
     return severity === GtfsData.AlertSeverity.SEVERE
   }
 
-  async convertDisruptionToAlert(disruption: Disruption): Promise<GtfsData.ServiceAlert> {
+  async convertDisruptionToAlert(disruption: GtfsData.DisruptionWithTweet): Promise<GtfsData.ServiceAlert> {
     const alertBuilder: GtfsData.ServiceAlert = {}
 
     alertBuilder.serverityLevel = disruption.severity ?? GtfsData.AlertSeverity.UNKNOWN_SEVERITY
@@ -36,7 +36,7 @@ export class GtfsService {
     return alertBuilder
   }
 
-  async createFeedEntity(twitter_id: string | null, disruption: Disruption): Promise<any> {
+  async createFeedEntity(twitter_id: string | null, disruption: GtfsData.DisruptionWithTweet): Promise<any> {
     try {
       // The Id of the entity may be the known on the netwo
       const entityBuilder: GtfsData.EntityBuilder = {
@@ -55,7 +55,7 @@ export class GtfsService {
   async getEncodedDisruptions(): Promise<Buffer> {
     // Need to get Disruptions from Databases
 
-    const disruptions = await this.disruptionService.getUnprocessedDisruptions()
+    const disruptions: GtfsData.DisruptionWithTweet[] = await this.disruptionService.getUnprocessedDisruptions()
     // Header du message GTFS-RT
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",
