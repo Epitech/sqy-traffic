@@ -4,7 +4,6 @@ import { Prisma, Tweet } from "@prisma/client"
 import Twitter, { GetTweetsQuery } from "../twitter-sdk"
 import { API_TOKEN } from "../../config/environnement"
 import { PrismaService } from "../prisma.service"
-import { timeout } from "cron"
 
 @Injectable()
 export default class TwitterService {
@@ -48,7 +47,7 @@ export default class TwitterService {
 
   // Every 60 --seconds--
   // *minutes for test
-  //@Interval(60 * 60 * 1000)
+  // @Interval(60 * 60 * 1000)
   @Interval(60 * 60 * 1000)
   async fetchTweets(): Promise<void> {
     // TODO: use logger via nestjs

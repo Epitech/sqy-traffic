@@ -102,8 +102,8 @@ export type Tweet = {
 }
 
 /**
-* Model Disruption
-*/
+ * Model Disruption
+ */
 
 export type DisruptionWithTweet = {
   id: string

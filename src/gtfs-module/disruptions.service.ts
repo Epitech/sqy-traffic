@@ -1,7 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Disruption } from "@prisma/client"
 import { PrismaService } from "src/prisma.service"
-import GtfsModule from "./gtfs.module"
 import * as GtfsData from "./gtfs.data"
 
 @Injectable()
@@ -28,8 +26,6 @@ export default class DisruptionService {
     //   },
     // })
   }
-
-  
 
   async getUnprocessedDisruptions(): Promise<GtfsData.DisruptionWithTweet[]> {
     const unprocessedDisruptions: GtfsData.DisruptionWithTweet[] = await this.prisma.disruption.findMany({
