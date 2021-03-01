@@ -1,8 +1,8 @@
 import { NestFactory } from "@nestjs/core"
-import { PORT } from "../config/environnement"
-import AppModule from "./app.module"
 import { PrismaClient } from "@prisma/client"
 import { exec } from "child_process"
+import AppModule from "./app.module"
+import { PORT } from "../config/environnement"
 
 async function main() {
   const app = await NestFactory.create(AppModule)
@@ -11,16 +11,16 @@ async function main() {
 }
 
 async function initDb() {
-  const client = new PrismaClient();
+  const client = new PrismaClient()
   await client.$connect().then(() => {
-    exec('npm run migrate', (err, stdout, stderr) => {
+    exec("npm run migrate", (err, stdout, stderr) => {
       if (err) {
         console.info(stderr)
         process.exit(1)
       }
       console.info(stdout)
     })
-    exec('npm run seed', (err, stdout, stderr) => {
+    exec("npm run seed", (err, stdout, stderr) => {
       if (err) {
         console.info(stderr)
       }
