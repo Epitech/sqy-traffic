@@ -26,7 +26,7 @@ services:
       - sqy
     environment:
       - TW_BEARER_TOKEN=AAAAAAAAAAAAAAAAAAAAAEwlKQEAAAAA%2FaxU%2F9GAfdDInpH88muoBnD2wIY%3DO8W9TskqivJkIlAdUCVfLAw6YOkiNR12R28SjZYIuDwONSWk0u
-      - TW_API_URL=https://api.twitter.com/v2/
+      - TW_API_URL=https://api.twitter.com/2
       - USERNAME_CHECKER=PoCInnovatioon
       - PORT=3000
       - PG_CONNECTION_STRING=postgres://root:root@postgres:5432/postgres
