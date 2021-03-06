@@ -55,6 +55,20 @@ Now, You can run the API with the following command:
 $ docker run --rm -it --name -p 3000:3000 "sqy_api" "sqy-traffic:latest"
 ```
 
+You can also run all the parts with Docker Compose:
+```bash
+$ docker-compose up --build
+```
+
+## Configuration
+
+The API can be configured with different environment variables:
+
+- `PORT` : Port where the API is listening
+- `TW_BEARER_TOKEN` : Token delivered by Twitter to access the Twitter API
+- `USERNAME_CHECKER` : Twitter Account name to test the connection to the Twitter API
+- `TW_API_URL` : URL to the twitter API
+- `PG_CONNECTION_STRING` : URL describing the information to connect PostgresSQL database
 
 ## Analyzer
 
