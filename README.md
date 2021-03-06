@@ -70,6 +70,10 @@ The API can be configured with different environment variables:
 - `TW_API_URL` : URL to the twitter API
 - `PG_CONNECTION_STRING` : URL describing the information to connect PostgresSQL database
 
+## Tweet Crawler
+
+To get realtime information, it is needed to get frequently the newest tweets to be parsed by the analyzer. We created to do a scheduled task to fetch and store them from the Twitter API. To be sure we scrapped all the tweets published, we set the delay between each fetch cycle to 1 minute.
+
 ## Analyzer
 
 The Analyzer service is the core of SQY-Traffic solution, so we imagined several way of research in order to get a result of extraction quite accurate  ready for a production context.
@@ -87,6 +91,9 @@ This solution was eligible because even if we don't know the context of the twee
 Therefore, we wrote sets of regex to handle the maximum of patterns we want to match with.
 
 
-
-
 ## Contributors
+
+- <a href="https://github.com/TheoHertz">Théo Hinsinger</a>
+- <a href="https://github.com/pr0m3th3usEx">Thomas Michel</a>
+- <a href="https://github.com/JeromeCGithub">Jérôme Collet</a>
+- <a href="https://github.com/TomChv">Tom Chauveau</a>
