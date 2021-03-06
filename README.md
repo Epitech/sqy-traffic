@@ -16,7 +16,7 @@ The solution we designed is divided into 4 parts:
 
 - **Analyzer**: This part determines if a tweet **IS** a disruption, and extracts disruption data from it
 
-- **Twitter Crawler**: Scheduled to call the Twitter API every minute and get the Transporters' newest tweets, it stores them into the database
+- **Tweet Crawler**: Scheduled to call the Twitter API every minute and get the Transporters' newest tweets, it stores them into the database
 
 - **NestJS Typsescript API**: Allows users to get in realtime the newest disruption information available
 
