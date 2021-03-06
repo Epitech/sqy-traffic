@@ -10,6 +10,10 @@ The goals of this project are:
 
 - Providing a simple & scalable solution to expose realtime data to be used by anyone
 
+## Architecture
+
+![Architecture]( ./.github/assets/Architecture.png "Schema")
+
 The solution we designed is divided into 4 parts:
 
 - **PostgresSQL database**: To store different information about the transporters, the tweets scrapped, and the disruptions analyzed
