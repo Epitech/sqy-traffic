@@ -54,11 +54,19 @@ $ docker run --rm -it --name -p 3000:3000 "sqy_api" "sqy-traffic:latest"
 
 ## Analyzer
 
-The Analyzer service is the core of SQY-Traffic solution, so we imagined several way of research in order to obtain a solution ready for production context.
-
-
+The Analyzer service is the core of SQY-Traffic solution, so we imagined several way of research in order to get a result of extraction quite accurate  ready for a production context.
 
 #### How to obtain relevant inforation from tweets ?
+
+There are several difficulties to parse tweets with the purpose of extracting several data. The main one is certainly the non-linearity of the content of the tweet.
+
+Indeed, the content can be incomplete, can be written in different format, and can incorporate a context, only understable by human. Tweet is a human-written text, addressed to another human. The perception of all the information passed into the tweet is easier for a human, even if information is omitted. Nonetheless, it's impossible for the computer to do it alone.
+
+The 1st parsing prototype is based on <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expression</a> (**RegExp**) :
+
+This solution was eligible because even if we don't know the context of the tweet or some information are missing, the way to write specific data such as dates, intervals or public transport line affected is limited and some patterns are repeated.
+
+Therefore, we wrote sets of regex to handle the maximum of patterns we want to match with.
 
 
 
