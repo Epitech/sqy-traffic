@@ -90,7 +90,7 @@ export interface EntityBuilder {
  * Model Tweet
  */
 
-export type Tweet = {
+export interface Tweet {
   id: string
   tweetId: string
   tweetUrl: string
@@ -105,7 +105,7 @@ export type Tweet = {
  * Model Disruption
  */
 
-export type DisruptionWithTweet = {
+export interface DisruptionWithTweet {
   id: string
   tweetId: string
   routeId: string

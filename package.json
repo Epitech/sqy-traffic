@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "nest build",
-    "start": "npm run migrate; npm run seed ; node dist/src/main.js",
+    "start": "npm run migrate && npm run seed && node dist/src/main.js",
     "start:dev": "nest start --watch",
     "dev": "docker-compose up -d --build && ts-node-dev src/main.ts",
     "clean": "rm -rf dist/ coverage/",

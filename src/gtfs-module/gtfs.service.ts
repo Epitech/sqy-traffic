@@ -3,21 +3,21 @@ import { Disruption } from "@prisma/client"
 import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
 import { PrismaService } from "../prisma.service"
 import DisruptionService from "./disruptions.service"
-import * as GtfsData from "./gtfs.data"
+import { DisruptionWithTweet, ServiceAlert, AlertSeverity, EntityBuilder, Incrementality } from "./gtfs.data"
 
 @Injectable()
 export class GtfsService {
   constructor(private prisma: PrismaService, private disruptionService: DisruptionService) {}
 
-  determineDeletion(severity: GtfsData.AlertSeverity): boolean {
+  determineDeletion(severity: AlertSeverity): boolean {
     // Choose how to deletion (we have the whole line in the Disruption)
-    return severity === GtfsData.AlertSeverity.SEVERE
+    return severity === AlertSeverity.SEVERE
   }
 
-  async convertDisruptionToAlert(disruption: GtfsData.DisruptionWithTweet): Promise<GtfsData.ServiceAlert> {
-    const alertBuilder: GtfsData.ServiceAlert = {}
+  async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
+    const alertBuilder: ServiceAlert = {}
 
-    alertBuilder.serverityLevel = disruption.severity ?? GtfsData.AlertSeverity.UNKNOWN_SEVERITY
+    alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
     alertBuilder.effect = <any>disruption.effect
     alertBuilder.url = [{ language: "fr", text: disruption.tweet?.tweetUrl ?? "NO_URL" }]
@@ -36,10 +36,10 @@ export class GtfsService {
     return alertBuilder
   }
 
-  async createFeedEntity(twitter_id: string | null, disruption: GtfsData.DisruptionWithTweet): Promise<any> {
+  async createFeedEntity(twitter_id: string | null, disruption: DisruptionWithTweet): Promise<any> {
     try {
       // The Id of the entity may be the known on the netwo
-      const entityBuilder: GtfsData.EntityBuilder = {
+      const entityBuilder: EntityBuilder = {
         id: twitter_id ?? "NO_ID",
         isDeleted: this.determineDeletion(disruption.severity),
       }
@@ -55,11 +55,11 @@ export class GtfsService {
   async getEncodedDisruptions(): Promise<Buffer> {
     // Need to get Disruptions from Databases
 
-    const disruptions: GtfsData.DisruptionWithTweet[] = await this.disruptionService.getUnprocessedDisruptions()
+    const disruptions: DisruptionWithTweet[] = await this.disruptionService.getUnprocessedDisruptions()
     // Header du message GTFS-RT
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",
-      incrementality: GtfsData.Incrementality.FULL_DATASET,
+      incrementality: Incrementality.FULL_DATASET,
       timestamp: Math.floor(new Date(Date.now()).getTime() / 1000).toString(),
     }
     // Construction des FeedEntity
