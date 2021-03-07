@@ -90,6 +90,22 @@ This solution was eligible because even if we don't know the context of the twee
 
 Therefore, we wrote sets of regex to handle the maximum of patterns we want to match with.
 
+Here some visual examples of what we could parse:
+
+*SOME EXAMPLES*
+
+#### Why did we conclude that RegExp was not a good idea? 
+
+Creating regular expressions for all the patterns we could is an heavy task and it may too much time to add, fix and update them frequently. Another problem comes from Twitter and micro-blogging texts : They are not always written in pure letters and grammatically correct language. It can be used some emoticons or abbreviations that make sense for a human but for detecting patterns.
+
+These elements make regular expressions not usable for a production context.
+
+#### Are there others solutions to test ?
+
+| NLP: Regular Expressions (RegExp) | NLP: Natural Language Understanding (NLU) |
+| -------------------------| ------------------------ |
+|            :x:           |     Not tested           |
+
 
 ## Contributors
 
