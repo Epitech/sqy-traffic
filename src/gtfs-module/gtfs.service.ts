@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common"
-import { Disruption } from "@prisma/client"
 import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
 import { PrismaService } from "../prisma.service"
 import DisruptionService from "./disruptions.service"
+import { ENV } from "../../config/environnement"
 import { DisruptionWithTweet, ServiceAlert, AlertSeverity, EntityBuilder, Incrementality } from "./gtfs.data"
 
 @Injectable()
@@ -55,7 +55,11 @@ export class GtfsService {
   async getEncodedDisruptions(): Promise<Buffer> {
     // Need to get Disruptions from Databases
 
-    const disruptions: DisruptionWithTweet[] = await this.disruptionService.getUnprocessedDisruptions()
+    const disruptions: DisruptionWithTweet[] =
+      ENV === "PROD"
+        ? await this.disruptionService.getUnprocessedDisruptions()
+        : await this.disruptionService.getDisruptionsService()
+
     // Header du message GTFS-RT
     const headerTemplate = {
       gtfsRealtimeVersion: "2.0",

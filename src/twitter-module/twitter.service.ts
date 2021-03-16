@@ -4,6 +4,7 @@ import { Prisma, Tweet } from "@prisma/client"
 import Twitter, { GetTweetsQuery } from "../twitter-sdk"
 import { API_TOKEN, INTERVAL_TWEET } from "../../config/environnement"
 import { PrismaService } from "../prisma.service"
+import { AlertSeverity } from "../gtfs-module/gtfs.data"
 
 @Injectable()
 export default class TwitterService {
@@ -115,7 +116,30 @@ export default class TwitterService {
         console.error(e)
       }
     }
-
+    for (const tweet of tweetsByAccount) {
+      try {
+        await this.prisma.disruption.create({
+          data: {
+            routeId: tweet.tweetUrl,
+            start_date: new Date(),
+            end_date: new Date(),
+            cause: "unknow",
+            effect: "unknow",
+            severity: AlertSeverity.WARNING,
+            description: tweet.text,
+            wasProcessed: false,
+            tweet: {
+              connect: {
+                tweetId: tweet.tweetId,
+                id: tweet.id,
+              },
+            },
+          },
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    }
     console.info(`[INFO] Cron: ${tweetsByAccount.length} fetched`)
   }
 
