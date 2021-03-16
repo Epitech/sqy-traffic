@@ -27,6 +27,28 @@ export default class DisruptionService {
     // })
   }
 
+  async getDisruptionsService(): Promise<DisruptionWithTweet[]> {
+    const unprocessedDisruptions: DisruptionWithTweet[] = await this.prisma.disruption.findMany({
+      include: {
+        tweet: true,
+      },
+    })
+    await Promise.all(
+      unprocessedDisruptions.map((disruption) =>
+        this.prisma.disruption.update({
+          where: {
+            id: disruption.id,
+          },
+          data: {
+            wasProcessed: true,
+          },
+        }),
+      ),
+    )
+    console.log(unprocessedDisruptions)
+    return unprocessedDisruptions
+  }
+
   async getUnprocessedDisruptions(): Promise<DisruptionWithTweet[]> {
     const unprocessedDisruptions: DisruptionWithTweet[] = await this.prisma.disruption.findMany({
       where: {

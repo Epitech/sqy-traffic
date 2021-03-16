@@ -31,6 +31,9 @@ services:
       - PORT=3000
       - PG_CONNECTION_STRING=postgres://root:root@postgres:5432/postgres
       - INTERVAL_TWEET=60000
+      - ENV=DEV
+    ports:
+      - "3000:3000"
 
 volumes:
   postgres-data:
