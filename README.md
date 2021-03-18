@@ -92,7 +92,7 @@ Therefore, we wrote sets of regex to handle the maximum of patterns we want to m
 
 Here some visual examples of what we could parse:
 
-*SOME EXAMPLES*
+![Examples]( ./.github/assets/Examples.png "Schema")
 
 #### Why did we conclude that RegExp was not a good idea? 
 
