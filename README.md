@@ -74,6 +74,10 @@ The API can be configured with different environment variables:
 
 To get realtime information, it is needed to get frequently the newest tweets to be parsed by the analyzer. We created to do a scheduled task to fetch and store them from the Twitter API. To be sure we scrapped all the tweets published, we set the delay between each fetch cycle to 1 minute.
 
+## Disruption Exposure
+
+In order to get disruptions data and update traffic information, we looked for a conventional way data format adapted to the type of data exposed. We selected GTFS-RT format (<a href="https://developers.google.com/transit/gtfs-realtime">Documentation</a>). This format has been created to handle perfectly updates from newer realtime traffic information.
+
 ## Analyzer
 
 The Analyzer service is the core of SQY-Traffic solution, so we imagined several way of research in order to get a result of extraction quite accurate  ready for a production context.
