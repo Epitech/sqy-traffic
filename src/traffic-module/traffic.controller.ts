@@ -1,4 +1,5 @@
 import { Controller, Get, Header, HttpException, HttpStatus, Res } from "@nestjs/common"
+import { ApiProperty } from "@nestjs/swagger"
 import { Response } from "express"
 import { Readable } from "stream"
 import TrafficService from "./traffic.service"
@@ -9,6 +10,7 @@ import { GtfsService } from "../gtfs-module/gtfs.service"
 export default class TrafficController {
   constructor(private readonly trafficService: TrafficService, private readonly gtfsService: GtfsService) {}
 
+  @ApiProperty({ description: "Transform unprocessed tweets to gtfs-rt format" })
   @Get()
   @Header("Content-Type", "application/octet-stream")
   async getDisruptions(@Res() res: Response): Promise<void> {
