@@ -22,6 +22,8 @@ async function main() {
         data: {
             name: account
         }
+      }).catch(e => {
+        console.log(`An erroe has occured when creating account in database ${e}`)
       })
   }
 }
