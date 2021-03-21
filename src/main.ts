@@ -1,8 +1,8 @@
 import { NestFactory } from "@nestjs/core"
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
-import { PORT, SQY_TRAFFIC_ENV } from "../config/environnement"
 import AppModule from "./app.module"
 import { version } from "../package.json"
+import { PORT } from "../config/environnement"
 
 async function main() {
   const isProd = SQY_TRAFFIC_ENV === "prod"

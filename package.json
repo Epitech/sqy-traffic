@@ -9,8 +9,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "start": "ts-node dist/main.js",
+    "build": "nest build",
+    "start": "npm run migrate && npm run seed && node dist/src/main.js",
     "start:dev": "nest start --watch",
     "dev": "docker-compose up -d --build && ts-node-dev src/main.ts",
     "clean": "rm -rf dist/ coverage/",
@@ -19,6 +19,7 @@
     "test": "jest --coverage tests",
     "test:watch": "jest --coverage tests --watchAll",
     "pretty": "prettier --write 'src/**/*.{ts,tsx}'",
+    "generate": "prisma generate",
     "migrate": "prisma migrate dev --preview-feature",
     "seed": "ts-node seed-database/index.ts",
     "generate": "prisma generate"

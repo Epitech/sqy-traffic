@@ -194,10 +194,10 @@ async function main() {
     try {
       await prisma.network.create({
         data: {
-          networkName: account.networkName,
-          // unused for now
-          instantSystemId: "",
-        },
+            name: account
+        }
+      }).catch(e => {
+        console.log(`An erroe has occured when creating account in database ${e}`)
       })
     } catch (e) {
       console.log((e as Error).message);
