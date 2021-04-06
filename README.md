@@ -108,8 +108,13 @@ These elements make regular expressions not usable for a production context.
 
 | NLP: Regular Expressions (RegExp) | NLP: Natural Language Understanding (NLU) |
 | -------------------------| ------------------------ |
-|            :x:           |     Not tested           |
+|            ✔️             |     [doc](./.doc.pdf)    |
 
+
+## Endpoints
+
+`/api/0.0.1/twitter` : get human readable disruptions (JSON format)<br>
+`/api/0.0.1/disruptions` : get disruptions (GTFS-RT format)
 
 ## Contributors
 
