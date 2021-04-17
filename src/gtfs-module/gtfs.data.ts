@@ -74,7 +74,8 @@ export interface ServiceAlert {
   // url of tweet as information
   url?: Translation[]
   // description for some detials
-  description?: Translation[]
+  description_text?: Translation[]
+  active_period?: TimeRange
 }
 
 export interface EntityBuilder {
@@ -84,6 +85,11 @@ export interface EntityBuilder {
   isDeleted?: boolean
   // Information of the alert
   alert?: ServiceAlert
+}
+
+export interface TimeRange {
+  start: number
+  end: number
 }
 
 /**
