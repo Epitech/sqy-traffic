@@ -16,17 +16,17 @@ export class GtfsService {
 
   async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
     const alertBuilder: ServiceAlert = {}
-    const active_period: TimeRange = {
+    const activePeriod: TimeRange = {
       start: disruption.start_date.getTime(),
-      end: disruption.start_date.getTime() + 3600 * 3
-    };
+      end: disruption.start_date.getTime() + 3600 * 3,
+    }
 
     alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
     alertBuilder.effect = <any>disruption.effect
     alertBuilder.url = [{ language: "fr", text: disruption.tweet?.tweetUrl ?? "NO_URL" }]
     alertBuilder.description_text = [{ language: "fr", text: disruption.tweet.text }]
-    alertBuilder.active_period = active_period
+    alertBuilder.active_period = activePeriod
     if (disruption.start_date || disruption.end_date) {
       alertBuilder.activePeriod = [{ start: disruption.start_date.getTime(), end: disruption.end_date.getTime() }]
     }
