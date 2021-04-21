@@ -49,7 +49,7 @@ export default class TwitterService {
   // Every 60 --seconds--
   // *minutes for test
   // @Interval(60 * 60 * 1000)
-  @Timeout(1000)
+  @Interval(INTERVAL_TWEET)
   // @Timeout(1000)
   async fetchTweets(): Promise<void> {
     // TODO: use logger via nestjs
@@ -72,7 +72,7 @@ export default class TwitterService {
         },
       },
     })
-    console.log(JSON.stringify(accounts));
+    console.log(JSON.stringify(accounts))
     const sevenDaysInMS = 7 * 24 * 60 * 60 * 1000
     const oldestValidDateForSinceId = new Date().getTime() - sevenDaysInMS
 
@@ -92,10 +92,10 @@ export default class TwitterService {
             if (latestTweetForAccount && latestTweetForAccount.postedAt.getTime() > oldestValidDateForSinceId) {
               params.since_id = latestTweetForAccount.tweetId
             }
-            let totalTweets: Prisma.TweetCreateInput[] = [];
+            let totalTweets: Prisma.TweetCreateInput[] = []
             for (const tweeterAccount of account.tweeterAccounts) {
               const tweets = await this.twitter.getTweets(tweeterAccount, params)
-              console.log(tweets);
+              console.log(tweets)
               totalTweets = totalTweets.concat(
                 tweets?.map((tweet) => ({
                   tweetId: tweet.id,
@@ -108,10 +108,10 @@ export default class TwitterService {
                   },
                   hasDisruption: this.findDisruptionInTweet(tweet.text),
                   postedAt: new Date(Date.parse(tweet.created_at)),
-                })) || []
+                })) || [],
               )
             }
-            return totalTweets;
+            return totalTweets
           },
         ),
       )
