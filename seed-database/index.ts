@@ -191,35 +191,41 @@ async function main() {
   await prisma.$connect()
 
   for (const account of accounts) {
+    const { twitterAccountName, networkName } =  account;
     try {
       await prisma.network.create({
         data: {
-          tweeterAccounts: account.twitterAccountName ? [account.twitterAccountName] : [],
-          instantSystemId: account.networkName,
-          networkName: account.networkName
+          tweeterAccounts: twitterAccountName ? [twitterAccountName] : [],
+          instantSystemId: networkName,
+          networkName: networkName
         }
       })
     } catch (e) {
-      if (account.twitterAccountName) {
+      if (twitterAccountName) {
         await prisma.network.update({
           where: {
-            networkName: account.networkName
+            networkName: networkName
           },
           data: {
             tweeterAccounts: (await prisma.network.findUnique({
               where: {
-                networkName: account.networkName
+                networkName: networkName
               }
-            })as any).tweeterAccounts.concat([account.twitterAccountName])
+            })as any).tweeterAccounts.concat([twitterAccountName])
           }
-      })};
-    }console.log(await prisma.network.findUnique({
+      }).catch((e) => {
+        console.log(e)
+      })}
+    }
+    console.log(await prisma.network.findUnique({
       where: {
-        networkName: account.networkName
+        networkName: networkName
       }
+    }).catch((e) => {
+      console.log(e)
     }));
 
-    const formatNetworkName = normalize(account.networkName)
+    const formatNetworkName = normalize(networkName)
     let found = false
     for (const dataLine of data.lines) {
       const formatLine: InstantSystemBus["lines"][0] = {
