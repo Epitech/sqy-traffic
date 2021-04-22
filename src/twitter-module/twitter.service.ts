@@ -72,7 +72,6 @@ export default class TwitterService {
         },
       },
     })
-    console.log(JSON.stringify(accounts))
     const sevenDaysInMS = 7 * 24 * 60 * 60 * 1000
     const oldestValidDateForSinceId = new Date().getTime() - sevenDaysInMS
 
@@ -95,7 +94,6 @@ export default class TwitterService {
             let totalTweets: Prisma.TweetCreateInput[] = []
             for (const tweeterAccount of account.tweeterAccounts) {
               const tweets = await this.twitter.getTweets(tweeterAccount, params)
-              console.log(tweets)
               totalTweets = totalTweets.concat(
                 tweets?.map((tweet) => ({
                   tweetId: tweet.id,

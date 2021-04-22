@@ -76,6 +76,7 @@ export interface ServiceAlert {
   // description for some detials
   description_text?: Translation[]
   active_period?: TimeRange
+  header_text?: Translation[]
 }
 
 export interface EntityBuilder {

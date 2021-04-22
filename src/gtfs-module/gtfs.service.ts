@@ -27,6 +27,15 @@ export class GtfsService {
     alertBuilder.url = [{ language: "fr", text: disruption.tweet?.tweetUrl ?? "NO_URL" }]
     alertBuilder.description_text = [{ language: "fr", text: disruption.tweet.text }]
     alertBuilder.active_period = activePeriod
+    alertBuilder.header_text = [
+      {
+        language: "fr",
+        text:
+          disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) +
+          disruption.createdAt.toString(),
+      },
+    ]
+    // console.log(disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) + disruption.createdAt.toString())
     if (disruption.start_date || disruption.end_date) {
       alertBuilder.activePeriod = [{ start: disruption.start_date.getTime(), end: disruption.end_date.getTime() }]
     }
@@ -37,7 +46,6 @@ export class GtfsService {
         routeId: disruption.routeId,
       },
     ]
-
     return alertBuilder
   }
 
