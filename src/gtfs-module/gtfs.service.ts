@@ -3,7 +3,7 @@ import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
 import { PrismaService } from "../prisma.service"
 import DisruptionService from "./disruptions.service"
 import { ENV } from "../../config/environnement"
-import { DisruptionWithTweet, ServiceAlert, AlertSeverity, EntityBuilder, Incrementality } from "./gtfs.data"
+import { DisruptionWithTweet, ServiceAlert, AlertSeverity, EntityBuilder, Incrementality, TimeRange } from "./gtfs.data"
 
 @Injectable()
 export class GtfsService {
@@ -16,12 +16,26 @@ export class GtfsService {
 
   async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
     const alertBuilder: ServiceAlert = {}
+    const activePeriod: TimeRange = {
+      start: disruption.start_date.getTime(),
+      end: disruption.start_date.getTime() + 3600 * 3,
+    }
 
     alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
     alertBuilder.effect = <any>disruption.effect
     alertBuilder.url = [{ language: "fr", text: disruption.tweet?.tweetUrl ?? "NO_URL" }]
-    alertBuilder.description = [{ language: "fr", text: disruption.tweet.text }]
+    alertBuilder.description_text = [{ language: "fr", text: disruption.tweet.text }]
+    alertBuilder.active_period = activePeriod
+    alertBuilder.header_text = [
+      {
+        language: "fr",
+        text:
+          disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) +
+          disruption.createdAt.toString(),
+      },
+    ]
+    // console.log(disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) + disruption.createdAt.toString())
     if (disruption.start_date || disruption.end_date) {
       alertBuilder.activePeriod = [{ start: disruption.start_date.getTime(), end: disruption.end_date.getTime() }]
     }
@@ -32,7 +46,6 @@ export class GtfsService {
         routeId: disruption.routeId,
       },
     ]
-
     return alertBuilder
   }
 

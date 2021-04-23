@@ -1,7 +1,19 @@
 -- CreateTable
-CREATE TABLE "TweeterAccount" (
+CREATE TABLE "Network" (
+    "id" TEXT NOT NULL,
+    "tweeterAccounts" TEXT[],
+    "networkName" TEXT NOT NULL,
+    "instantSystemId" TEXT NOT NULL,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Lines" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "instantSystemId" TEXT NOT NULL,
+    "networkId" TEXT NOT NULL,
 
     PRIMARY KEY ("id")
 );
@@ -38,7 +50,10 @@ CREATE TABLE "Disruption" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TweeterAccount.name_unique" ON "TweeterAccount"("name");
+CREATE UNIQUE INDEX "Network.networkName_unique" ON "Network"("networkName");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Lines.name_unique" ON "Lines"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Tweet.tweetId_unique" ON "Tweet"("tweetId");
@@ -47,7 +62,10 @@ CREATE UNIQUE INDEX "Tweet.tweetId_unique" ON "Tweet"("tweetId");
 CREATE UNIQUE INDEX "Disruption_tweetId_unique" ON "Disruption"("tweetId");
 
 -- AddForeignKey
-ALTER TABLE "Tweet" ADD FOREIGN KEY("authorId")REFERENCES "TweeterAccount"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Lines" ADD FOREIGN KEY("networkId")REFERENCES "Network"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Tweet" ADD FOREIGN KEY("authorId")REFERENCES "Network"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Disruption" ADD FOREIGN KEY("tweetId")REFERENCES "Tweet"("id") ON DELETE CASCADE ON UPDATE CASCADE;

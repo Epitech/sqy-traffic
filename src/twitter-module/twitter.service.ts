@@ -58,7 +58,7 @@ export default class TwitterService {
     const accounts = await this.prisma.network.findMany({
       select: {
         id: true,
-        tweeterAccount: true,
+        tweeterAccounts: true,
         Tweet: {
           // Latest tweet
           select: {
@@ -72,7 +72,6 @@ export default class TwitterService {
         },
       },
     })
-
     const sevenDaysInMS = 7 * 24 * 60 * 60 * 1000
     const oldestValidDateForSinceId = new Date().getTime() - sevenDaysInMS
 
@@ -81,7 +80,7 @@ export default class TwitterService {
         accounts.map(
           async (account): Promise<Prisma.TweetCreateInput[]> => {
             // Noctilien, stile ?
-            if (!account.tweeterAccount) {
+            if (account.tweeterAccounts.length === 0) {
               return []
             }
 
@@ -92,22 +91,27 @@ export default class TwitterService {
             if (latestTweetForAccount && latestTweetForAccount.postedAt.getTime() > oldestValidDateForSinceId) {
               params.since_id = latestTweetForAccount.tweetId
             }
-            const tweets = await this.twitter.getTweets(account.tweeterAccount, params)
-
-            return (
-              tweets?.map((tweet) => ({
-                tweetId: tweet.id,
-                tweetUrl: `https://twitter.com/${account.name}`,
-                text: tweet.text,
-                author: {
-                  connect: {
-                    id: account.id,
-                  },
-                },
-                hasDisruption: this.findDisruptionInTweet(tweet.text),
-                postedAt: new Date(Date.parse(tweet.created_at)),
-              })) || []
+            // let totalTweets: Prisma.TweetCreateInput[] = []
+            const totalTweets = await Promise.all(
+              account.tweeterAccounts.map(async (tweeterAccount) => {
+                const tweets = await this.twitter.getTweets(tweeterAccount, params)
+                return (
+                  tweets?.map((tweet) => ({
+                    tweetId: tweet.id,
+                    tweetUrl: `https://twitter.com/${tweeterAccount}`,
+                    text: tweet.text,
+                    author: {
+                      connect: {
+                        id: account.id,
+                      },
+                    },
+                    hasDisruption: this.findDisruptionInTweet(tweet.text),
+                    postedAt: new Date(Date.parse(tweet.created_at)),
+                  })) || []
+                )
+              }),
             )
+            return totalTweets.flat()
           },
         ),
       )

@@ -10,7 +10,7 @@ generator client {
 model Network {
   id String @id @default(uuid())
 
-  tweeterAccount  String?
+  tweeterAccounts  String[]
   networkName     String  @unique
   instantSystemId String
   Tweet           Tweet[]

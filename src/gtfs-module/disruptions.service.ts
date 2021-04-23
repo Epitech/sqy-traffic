@@ -32,6 +32,10 @@ export default class DisruptionService {
       include: {
         tweet: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
     })
     await Promise.all(
       unprocessedDisruptions.map((disruption) =>
@@ -45,7 +49,7 @@ export default class DisruptionService {
         }),
       ),
     )
-    console.log(unprocessedDisruptions)
+    // console.log(unprocessedDisruptions)
     return unprocessedDisruptions
   }
 
@@ -54,6 +58,10 @@ export default class DisruptionService {
       where: {
         wasProcessed: false,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 50,
       include: {
         tweet: true,
       },
