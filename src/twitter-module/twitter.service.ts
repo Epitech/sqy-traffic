@@ -91,25 +91,27 @@ export default class TwitterService {
             if (latestTweetForAccount && latestTweetForAccount.postedAt.getTime() > oldestValidDateForSinceId) {
               params.since_id = latestTweetForAccount.tweetId
             }
-            let totalTweets: Prisma.TweetCreateInput[] = []
-            for (const tweeterAccount of account.tweeterAccounts) {
-              const tweets = await this.twitter.getTweets(tweeterAccount, params)
-              totalTweets = totalTweets.concat(
-                tweets?.map((tweet) => ({
-                  tweetId: tweet.id,
-                  tweetUrl: `https://twitter.com/${tweeterAccount}`,
-                  text: tweet.text,
-                  author: {
-                    connect: {
-                      id: account.id,
+            // let totalTweets: Prisma.TweetCreateInput[] = []
+            const totalTweets = await Promise.all(
+              account.tweeterAccounts.map(async (tweeterAccount) => {
+                const tweets = await this.twitter.getTweets(tweeterAccount, params)
+                return (
+                  tweets?.map((tweet) => ({
+                    tweetId: tweet.id,
+                    tweetUrl: `https://twitter.com/${tweeterAccount}`,
+                    text: tweet.text,
+                    author: {
+                      connect: {
+                        id: account.id,
+                      },
                     },
-                  },
-                  hasDisruption: this.findDisruptionInTweet(tweet.text),
-                  postedAt: new Date(Date.parse(tweet.created_at)),
-                })) || [],
-              )
-            }
-            return totalTweets
+                    hasDisruption: this.findDisruptionInTweet(tweet.text),
+                    postedAt: new Date(Date.parse(tweet.created_at)),
+                  })) || []
+                )
+              }),
+            )
+            return totalTweets.flat()
           },
         ),
       )
