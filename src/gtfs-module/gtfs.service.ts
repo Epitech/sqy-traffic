@@ -16,28 +16,27 @@ export class GtfsService {
 
   async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
     const alertBuilder: ServiceAlert = {}
-    const activePeriod: TimeRange = {
-      start: disruption.start_date.getTime(),
-      end: disruption.start_date.getTime() + 3600 * 3,
-    }
 
     alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
     alertBuilder.effect = <any>disruption.effect
-    alertBuilder.url = [{ language: "fr", text: disruption.tweet?.tweetUrl ?? "NO_URL" }]
-    alertBuilder.description_text = [{ language: "fr", text: disruption.tweet.text }]
-    alertBuilder.active_period = activePeriod
-    alertBuilder.header_text = [
-      {
-        language: "fr",
-        text:
-          disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) +
-          disruption.createdAt.toString(),
-      },
-    ]
+    alertBuilder.url = { translation: [{ language: "fr", text: disruption.tweet.tweetUrl ?? "NO_URL" }] }
+    alertBuilder.descriptionText = { translation: [{ language: "fr", text: disruption.tweet.text }] }
+    alertBuilder.headerText = {
+      translation: [
+        {
+          language: "fr",
+          text:
+            disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) +
+            disruption.createdAt.toString(),
+        },
+      ],
+    }
     // console.log(disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) + disruption.createdAt.toString())
     if (disruption.start_date || disruption.end_date) {
-      alertBuilder.activePeriod = [{ start: disruption.start_date.getTime(), end: disruption.end_date.getTime() }]
+      alertBuilder.activePeriod = [
+        { start: disruption.start_date.getTime() / 1000, end: disruption.end_date.getTime() / 1000 + 3 * 3600 },
+      ]
     }
 
     // From analysis conclusion, check which ways are disrupted from Mapper to get the informed entity (route_id?,  stop_id ?)
@@ -55,9 +54,9 @@ export class GtfsService {
       const entityBuilder: EntityBuilder = {
         id: twitter_id ?? "NO_ID",
         isDeleted: this.determineDeletion(disruption.severity),
+        alert: await this.convertDisruptionToAlert(disruption),
       }
 
-      entityBuilder.alert = await this.convertDisruptionToAlert(disruption)
       return GtfsRealtimeBindings.transit_realtime.FeedEntity.fromObject(entityBuilder)
     } catch (e) {
       console.log(e)

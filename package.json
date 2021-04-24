@@ -22,7 +22,7 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate dev --preview-feature",
     "seed": "ts-node seed-database/index.ts",
-    "generate": "prisma generate"
+    "tester": "python3 tester.py"
   },
   "repository": {
     "type": "git",

@@ -60,9 +60,12 @@ export interface Translation {
   text?: string
 }
 
+export interface TranslatedString {
+  translation: Translation[]
+}
+
 export interface ServiceAlert {
-  // Periods Affected by the Disruption
-  activePeriod?: AlertPeriod[]
+  activePeriod?: TimeRange[]
   // cause
   cause?: AlertCause
   // effect
@@ -72,11 +75,10 @@ export interface ServiceAlert {
   // networks affected by the disruption
   informedEntity?: Entity[]
   // url of tweet as information
-  url?: Translation[]
+  url?: TranslatedString
   // description for some detials
-  description_text?: Translation[]
-  active_period?: TimeRange
-  header_text?: Translation[]
+  descriptionText?: TranslatedString
+  headerText?: TranslatedString
 }
 
 export interface EntityBuilder {
@@ -85,7 +87,7 @@ export interface EntityBuilder {
   // Is entity deleted ?
   isDeleted?: boolean
   // Information of the alert
-  alert?: ServiceAlert
+  alert: ServiceAlert
 }
 
 export interface TimeRange {
