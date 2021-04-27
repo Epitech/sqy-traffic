@@ -16,6 +16,7 @@ export class GtfsService {
 
   async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
     const alertBuilder: ServiceAlert = {}
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
 
     alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
@@ -28,7 +29,12 @@ export class GtfsService {
           language: "fr",
           text:
             disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) +
-            disruption.createdAt.toString(),
+            " (" +
+            disruption.createdAt.toLocaleDateString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }) +
+            ")",
         },
       ],
     }

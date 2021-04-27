@@ -25,6 +25,7 @@ module.exports = {
 		"class-methods-use-this": "off",
 		"no-console": "off",
 		"no-restricted-syntax": "off",
-		"no-await-in-loop": "off"
+		"no-await-in-loop": "off",
+		"prefer-template": "off"
 	}
 }
