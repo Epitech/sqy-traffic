@@ -28,15 +28,17 @@ export default class DisruptionService {
   }
 
   async getDisruptionsService(): Promise<DisruptionWithTweet[]> {
-    const unprocessedDisruptions: DisruptionWithTweet[] = await this.prisma.disruption.findMany({
-      include: {
-        tweet: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 50,
-    })
+    const unprocessedDisruptions: DisruptionWithTweet[] = await (
+      await this.prisma.disruption.findMany({
+        include: {
+          tweet: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 50,
+      })
+    ).filter((e) => e.tweet.hasDisruption === true)
     await Promise.all(
       unprocessedDisruptions.map((disruption) =>
         this.prisma.disruption.update({
@@ -54,18 +56,20 @@ export default class DisruptionService {
   }
 
   async getUnprocessedDisruptions(): Promise<DisruptionWithTweet[]> {
-    const unprocessedDisruptions: DisruptionWithTweet[] = await this.prisma.disruption.findMany({
-      where: {
-        wasProcessed: false,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 50,
-      include: {
-        tweet: true,
-      },
-    })
+    const unprocessedDisruptions: DisruptionWithTweet[] = await (
+      await this.prisma.disruption.findMany({
+        where: {
+          wasProcessed: false,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 50,
+        include: {
+          tweet: true,
+        },
+      })
+    ).filter((e) => e.tweet.hasDisruption === true)
     await Promise.all(
       unprocessedDisruptions.map((disruption) =>
         this.prisma.disruption.update({
