@@ -30,7 +30,7 @@ export class GtfsService {
           text:
             disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) +
             " (" +
-            disruption.createdAt.toLocaleDateString("fr-FR", {
+            disruption.start_date.toLocaleDateString("fr-FR", {
               hour: "2-digit",
               minute: "2-digit",
             }) +
