@@ -130,8 +130,8 @@ export default class TwitterService {
         await this.prisma.disruption.create({
           data: {
             routeId: tweet.tweetUrl,
-            start_date: new Date(),
-            end_date: new Date(),
+            start_date: tweet.postedAt,
+            end_date: tweet.postedAt,
             cause: "unknow",
             effect: "unknow",
             severity: AlertSeverity.WARNING,
