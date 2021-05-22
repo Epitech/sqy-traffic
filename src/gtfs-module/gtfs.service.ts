@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
+import moment from "moment"
 import { PrismaService } from "../prisma.service"
 import DisruptionService from "./disruptions.service"
 import { ENV } from "../../config/environnement"
@@ -17,6 +18,7 @@ export class GtfsService {
   async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
     const alertBuilder: ServiceAlert = {}
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
+    const d = moment(disruption.start_date).utc().format("DD/MM/YYYY à HH:MM").toString()
 
     alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
@@ -27,21 +29,14 @@ export class GtfsService {
       translation: [
         {
           language: "fr",
-          text:
-            disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) +
-            " (" +
-            disruption.start_date.toLocaleDateString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }) +
-            ")",
+          text: disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) + " (" + d + ")",
         },
       ],
     }
     // console.log(disruption.routeId.slice("https://twitter.com/".length, disruption.routeId.length) + disruption.createdAt.toString())
     if (disruption.start_date || disruption.end_date) {
       alertBuilder.activePeriod = [
-        { start: disruption.start_date.getTime() / 1000, end: disruption.end_date.getTime() / 1000 + 3 * 3600 },
+        { start: disruption.start_date.getTime() / 1000, end: disruption.end_date.getTime() / 1000 + 24 * 3600 },
       ]
     }
 
