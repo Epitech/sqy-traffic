@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
-import moment from "moment"
+// import moment from "moment"
+import moment from "moment-timezone"
 import { PrismaService } from "../prisma.service"
 import DisruptionService from "./disruptions.service"
 import { ENV } from "../../config/environnement"
@@ -18,7 +19,7 @@ export class GtfsService {
   async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
     const alertBuilder: ServiceAlert = {}
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
-    const d = moment(disruption.start_date).utc().format("DD/MM/YYYY à HH:MM").toString()
+    const d = moment(disruption.start_date).utc().tz("Europe/Paris").format("DD/MM/YYYY à HH:MM").toString()
 
     alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
