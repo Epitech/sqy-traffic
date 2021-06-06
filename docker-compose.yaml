@@ -32,6 +32,7 @@ services:
       - PG_CONNECTION_STRING=postgres://root:root@postgres:5432/postgres
       - INTERVAL_TWEET=60000
       - ENV=DEV
+      - TIME_OFFSET=2
     ports:
       - "3000:3000"
 

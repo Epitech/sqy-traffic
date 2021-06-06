@@ -4,7 +4,7 @@ import * as GtfsRealtimeBindings from "gtfs-realtime-bindings"
 import moment from "moment-timezone"
 import { PrismaService } from "../prisma.service"
 import DisruptionService from "./disruptions.service"
-import { ENV } from "../../config/environnement"
+import { ENV, TIME_OFFSET } from "../../config/environnement"
 import { DisruptionWithTweet, ServiceAlert, AlertSeverity, EntityBuilder, Incrementality, TimeRange } from "./gtfs.data"
 
 @Injectable()
@@ -19,14 +19,8 @@ export class GtfsService {
   async convertDisruptionToAlert(disruption: DisruptionWithTweet): Promise<ServiceAlert> {
     const alertBuilder: ServiceAlert = {}
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
-    const md = moment(disruption.start_date)
-      .utc()
-      .tz("Europe/Paris")
-      .add(24, "hours")
-      .startOf("day")
-      .add(2, "hours")
-      .unix()
-    const d = moment(disruption.start_date).utc().tz("Europe/Paris").format("DD/MM/YYYY à HH:MM").toString()
+    const md = moment(disruption.start_date).utc().tz("Europe/Paris").add(24, "hours").startOf("day").unix()
+    const d = moment(disruption.start_date).add(TIME_OFFSET, "hours").format("DD/MM/YYYY à HH:mm").toString()
 
     alertBuilder.serverityLevel = disruption.severity ?? AlertSeverity.UNKNOWN_SEVERITY
     alertBuilder.cause = <any>disruption.cause
